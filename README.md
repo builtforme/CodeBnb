@@ -8,3 +8,8 @@ This is meant to run as an AWS Lambda function once per day. It takes the follow
 3. Grant the candidate's GitHub account outside collaborator access to the repository.
 4. Notify the candidate the access has been granted. (Via email? Via AngelList?)
 5. Revoke the outside collaborator access at the end of the 72-hour assignment window.
+
+## Setup
+You need to set some environment variables to make this run:
+
+`GITHUB_USER_TOKEN` - An access token from https://github.com/settings/tokens retrieved by an account with sufficient permissions to the GitHub organization containing the template repo.
