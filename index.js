@@ -10,17 +10,12 @@ const candidateGitHubUsername = 'Furchin';
 
 const candidateRepo = `${templateRepo}-${candidateGitHubUsername}`;
 
-
 const github = new GitHubApi({
   Promise: require('bluebird'),
   timeout: 5000
 });
 
 github.authenticate({
-  // type: "oauth",
-  // //token: process.env.GITHUB_TOKEN
-  // key: process.env.GITHUB_KEY,
-  // secret: process.env.GITHUB_SECRET
   type: "token",
   token: process.env.GITHUB_USER_TOKEN
 });
@@ -47,14 +42,25 @@ function cloneTemplateRepo() {
       console.error(`exec error: ${err}`);
       return;
     }
-    // TODO: Push to cloned repo
 
-    // TODO: Move to step 3.
+    grantCollaboratorAccess();
   })
 }
 
 // Step 3 - Grant the user collaborator access to the new repo
+function grantCollaboratorAccess() {
+  github.repos.addCollaborator({
+    owner: org,
+    repo: candidateRepo,
+    username: candidateGitHubUsername,
+    permission: 'push' // Options are 'pull', 'push', 'admin'.
+  }).then(res => {
+    console.log('success', res);
+  }).catch(err => {
+    console.error(err);
+  })
+}
 
 // Start the process!
 // TODO: call createRepo to start.
-cloneTemplateRepo();
+grantCollaboratorAccess();
