@@ -58,9 +58,21 @@ function grantCollaboratorAccess() {
     console.log('success', res);
   }).catch(err => {
     console.error(err);
-  })
+  });
+}
+
+function removeCollaboratorAccess() {
+  github.repos.removeCollaborator({
+    owner: org,
+    repo: candidateRepo,
+    username: candidateGitHubUsername
+  }).then(res => {
+    console.log('success', res);
+  }).catch(err => {
+    console.error(err);
+  });
 }
 
 // Start the process!
 // TODO: call createRepo to start.
-grantCollaboratorAccess();
+removeCollaboratorAccess();
