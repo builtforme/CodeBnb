@@ -1,0 +1,12 @@
+# Log files and folders
+*.log
+npm-debug.log*
+
+# Mac related files
+.DS_Store
+
+# Node modules package directory
+node_modules
+
+# npm cache directory
+.npm
