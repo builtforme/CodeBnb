@@ -15,6 +15,7 @@ TODO: Describe the columns in the spreadsheet.
 ## Setup
 You need to set some environment variables to make this run:
 
+`GITHUB_ORG` - The name of the organization under which software assignments will be created (and in which the template repository lives).
 `GITHUB_USER_TOKEN` - An access token from https://github.com/settings/tokens retrieved by an account with sufficient permissions to the GitHub organization containing the template repo.
 
 `SPREADSHEET_KEY` - The spreadsheet key from the Google Docs URL. See https://www.npmjs.com/package/google-spreadsheet

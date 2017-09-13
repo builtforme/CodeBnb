@@ -1,6 +1,7 @@
 const gs = require('google-spreadsheet');
 const _ = require('underscore');
 const moment = require('moment');
+const repos = require('./repos');
 
 function readSpreadsheet() {
   const doc = new gs(process.env.SPREADSHEET_KEY);
@@ -48,14 +49,21 @@ function getRowsFromSheet(sheet) {
       const parsedEnd = moment(candidate.start).add(candidate.window, 'hours');
       if (parsedStart.isAfter(today) && parsedStart.isBefore(tomorrow)) {
         console.log(`Starting assignment for ${candidate.candidatename}, officially starting at ${candidate.start}`);
-        // TODO
+        repos.initializeCandidate({
+          templateRepo: candidate.assignment,
+          candidateGitHubUsername: candidate.github
+        });
         candidate.assigned = today.toString();
         candidate.save();
       } else if (parsedEnd.isAfter(moment()) && parsedEnd.isBefore(moment().add(1, 'day'))) {
         console.log(`Ending assignment for ${candidate.candidatename}, officially started at ${candidate.start} with a ${candidate.window}-hour window.`);
-        // TODO
-        candidate.revoked = today.toString();
-        candidate.save();
+        removeCollaboratorAccess({
+          templateRepo: candidate.assignment,
+          candidateGitHubUsername: candidate.github
+        }).then(() => {
+          candidate.revoked = today.toString();
+          candidate.save();
+        });
       }
     });
   });
