@@ -37,7 +37,7 @@ function createRepo() {
 // Step 2 - Clone the template repo into the one we just created
 // Based on https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
 function cloneTemplateRepo() {
-  exec(`mkdir ${candidateRepo} && cd ${candidateRepo} && git init && git pull https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${templateRepo} && git remote add origin https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} && git push origin master`, (err, stdout, stderr) => {
+  exec(`mkdir /tmp/${candidateRepo} && cd /tmp/${candidateRepo} && git init && git pull https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${templateRepo} && git remote add origin https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} && git push origin master`, (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
       return;

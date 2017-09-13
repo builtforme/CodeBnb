@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "bluebird": "^3.5.0",
-    "github": "^11.0.0"
+    "github": "^11.0.0",
+    "google-spreadsheet": "^2.0.4",
+    "moment": "^2.18.1",
+    "underscore": "^1.8.3"
   }
 }
