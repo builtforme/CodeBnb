@@ -17,13 +17,14 @@ function initializeCandidate(params) {
   const templateRepo = params.templateRepo;
   const candidateGitHubUsername = params.candidateGitHubUsername;
   const candidateRepo = `${templateRepo}-${candidateGitHubUsername}`;
+  const candidateName = params.candidateName;
 
   // Step 1 - create the repo
   function createRepo() {
     github.repos.createForOrg({
       name: `${candidateRepo}`,
       org: org,
-      description: `Software Engineering Assignment for ${candidateGitHubUsername}`,
+      description: `Software Engineering Assignment for ${candidateName}`,
       private: true
     }).then(function (res) {
       cloneTemplateRepo();

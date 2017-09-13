@@ -51,7 +51,8 @@ function getRowsFromSheet(sheet) {
         console.log(`Starting assignment for ${candidate.candidatename}, officially starting at ${candidate.start}`);
         repos.initializeCandidate({
           templateRepo: candidate.assignment,
-          candidateGitHubUsername: candidate.github
+          candidateGitHubUsername: candidate.github,
+          candidateName: candidate.candidatename
         });
         candidate.assigned = today.toString();
         candidate.save();
@@ -69,4 +70,6 @@ function getRowsFromSheet(sheet) {
   });
 }
 
-readSpreadsheet();
+module.exports = {
+  readSpreadsheet,
+}
