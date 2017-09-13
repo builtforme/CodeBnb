@@ -48,14 +48,14 @@ function getRowsFromSheet(sheet) {
       const parsedEnd = moment(candidate.start).add(candidate.window, 'hours');
       if (parsedStart.isAfter(today) && parsedStart.isBefore(tomorrow)) {
         console.log(`Starting assignment for ${candidate.candidatename}, officially starting at ${candidate.start}`);
+        // TODO
         candidate.assigned = today.toString();
         candidate.save();
-        // TODO
       } else if (parsedEnd.isAfter(moment()) && parsedEnd.isBefore(moment().add(1, 'day'))) {
         console.log(`Ending assignment for ${candidate.candidatename}, officially started at ${candidate.start} with a ${candidate.window}-hour window.`);
+        // TODO
         candidate.revoked = today.toString();
         candidate.save();
-        // TODO
       }
     });
   });
