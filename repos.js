@@ -1,7 +1,10 @@
 const GitHubApi = require('github');
 const Promise = require('bluebird');
+const lambdagit = require('lambda-git')();
 const {exec} = require('child_process');
+
 const org = process.env.GITHUB_ORG;
+const git = lambdagit.binPath;
 
 const github = new GitHubApi({
   Promise: require('bluebird'),
@@ -36,7 +39,7 @@ function initializeCandidate(params) {
   // Step 2 - Clone the template repo into the one we just created
   // Based on https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
   function cloneTemplateRepo() {
-    exec(`mkdir /tmp/${candidateRepo} && cd /tmp/${candidateRepo} && git init && git pull https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${templateRepo} && git remote add origin https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} && git push origin master && cd /tmp && rm -rf ${candidateRepo}`, (err, stdout, stderr) => {
+    exec(`mkdir /tmp/${candidateRepo} && cd /tmp/${candidateRepo} && ${git} init && ${git} pull https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${templateRepo} && ${git} remote add origin https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} && ${git} push origin master && cd /tmp && rm -rf ${candidateRepo}`, (err, stdout, stderr) => {
       if (err) {
         console.error(`exec error: ${err}`);
         return;

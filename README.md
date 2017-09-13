@@ -29,3 +29,7 @@ Follow instructions at https://www.npmjs.com/package/google-spreadsheet#service-
 You may need to go into Google Sheets and grant access to the service account email address.
 
 ### AWS Lambda Cron
+
+## Deploying to AWS Lambda
+1. Run `npm run zip` to generate the file `lambda.zip`.
+2.
