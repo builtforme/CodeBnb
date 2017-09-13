@@ -41,13 +41,14 @@ function getRowsFromSheet(sheet) {
     }
 
     _.each(rows, (candidate) => {
-      // If the candidate's start date is within the next 24 hours we need to enable the software engineering assignment.
-      // If the candidate's window ends within the next 24 hours we need to revoke access.
+      // If the candidate's start date is today we need to enable the software engineering assignment.
+      // If the candidate's window ends today we need to revoke access.
+      // All this works because we expect this code to be run only once per day.
       const parsedStart = moment(candidate.start);
       const today = moment();
-      const tomorrow = moment().add(1, 'day');
       const parsedEnd = moment(candidate.start).add(candidate.window, 'hours');
-      if (parsedStart.isAfter(today) && parsedStart.isBefore(tomorrow)) {
+      console.log(`Parsed Start Date ${parsedStart}; today is ${today}; parsed end date is ${parsedEnd}`);
+      if (parsedStart.isSame(today, 'day')) {
         console.log(`Starting assignment for ${candidate.candidatename}, officially starting at ${candidate.start}`);
         repos.initializeCandidate({
           templateRepo: candidate.assignment,
@@ -56,7 +57,7 @@ function getRowsFromSheet(sheet) {
         });
         candidate.assigned = today.toString();
         candidate.save();
-      } else if (parsedEnd.isAfter(moment()) && parsedEnd.isBefore(moment().add(1, 'day'))) {
+      } else if (parsedEnd.isSame(today, 'day')) {
         console.log(`Ending assignment for ${candidate.candidatename}, officially started at ${candidate.start} with a ${candidate.window}-hour window.`);
         repos.removeCollaboratorAccess({
           templateRepo: candidate.assignment,
