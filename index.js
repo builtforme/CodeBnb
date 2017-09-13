@@ -1,7 +1,10 @@
 const spreadsheet = require('./spreadsheet');
 
 function run() {
-  spreadsheet.readSpreadsheet();
+  require('lambda-git')().then(() => {
+    console.log('git should be installed and available for use');
+    spreadsheet.readSpreadsheet();
+  });
 }
 
 module.exports = {
