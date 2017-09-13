@@ -58,7 +58,7 @@ function getRowsFromSheet(sheet) {
         candidate.save();
       } else if (parsedEnd.isAfter(moment()) && parsedEnd.isBefore(moment().add(1, 'day'))) {
         console.log(`Ending assignment for ${candidate.candidatename}, officially started at ${candidate.start} with a ${candidate.window}-hour window.`);
-        removeCollaboratorAccess({
+        repos.removeCollaboratorAccess({
           templateRepo: candidate.assignment,
           candidateGitHubUsername: candidate.github
         }).then(() => {
