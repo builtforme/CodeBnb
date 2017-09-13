@@ -5,6 +5,9 @@ npm-debug.log*
 # Mac related files
 .DS_Store
 
+# Lambda zip file
+lambda.zip
+
 # Node modules package directory
 node_modules
 
