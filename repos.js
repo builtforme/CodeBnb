@@ -62,6 +62,9 @@ function initializeCandidate(params) {
   return createRepo()
   .then(cloneTemplateRepo)
   .then(grantCollaboratorAccess)
+  .then(() => {
+    console.log('repos completed successfully');
+  })
   .catch((err) => {
     console.log('Caught error in repos ', err);
   });

@@ -2,6 +2,7 @@ const spreadsheet = require('./spreadsheet');
 const fs = require('fs');
 
 function run(event, context, callback) {
+  console.log('Event = ', JSON.stringify(event));
   if (event.httpMethod === 'GET'
     && event.queryStringParameters.authCode) {
     // If a GitHub username was provided, then we start the assignment.
@@ -15,7 +16,7 @@ function run(event, context, callback) {
             'isBase64Encoded': false,
             'statusCode': 200,
             'headers': { 'headerName': 'headerValue' },
-            'body': 'OK' // TODO: Return some HTML which will make the candidate feel good.
+            'body': fs.readFileSync('html/success.html', {encoding: 'utf8'});
           });
         })
         .catch((err) => {
@@ -33,12 +34,11 @@ function run(event, context, callback) {
       // an HTML page which prompts the candidate to enter their GitHub username.
       // We don't validate the authCode in this path since it doesn't matter.
       console.log('No GitHub username provided; returning HTML to ask for it.');
-      const html = fs.readFileSync('html/githubUsernameForm.html', {encoding: 'utf8'});
       callback(null, {
         'isBase64Encoded': false,
         'statusCode': 200,
         'headers': { 'content-type': 'text/html' },
-        'body': html
+        'body': fs.readFileSync('html/githubUsernameForm.html', {encoding: 'utf8'});
       });
     }
   } else if (event.httpMethod === 'POST') {
