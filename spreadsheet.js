@@ -23,6 +23,20 @@ function getWorksheet() {
   });
 }
 
+function addRow(row) {
+  return getWorksheet()
+  .then((sheet) => {
+    return new Promise((resolve, reject) => {
+      sheet.addRow(row, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve();
+      })
+    });
+  });
+}
+
 function readSpreadsheet() {
   getWorksheet()
   .then(getRowsFromSheet);
