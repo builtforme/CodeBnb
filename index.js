@@ -16,7 +16,7 @@ function run(event, context, callback) {
             'isBase64Encoded': false,
             'statusCode': 200,
             'headers': { 'headerName': 'headerValue' },
-            'body': fs.readFileSync('html/success.html', {encoding: 'utf8'});
+            'body': fs.readFileSync('html/success.html', {encoding: 'utf8'})
           });
         })
         .catch((err) => {
@@ -38,7 +38,7 @@ function run(event, context, callback) {
         'isBase64Encoded': false,
         'statusCode': 200,
         'headers': { 'content-type': 'text/html' },
-        'body': fs.readFileSync('html/githubUsernameForm.html', {encoding: 'utf8'});
+        'body': fs.readFileSync('html/githubUsernameForm.html', {encoding: 'utf8'})
       });
     }
   } else if (event.httpMethod === 'POST') {
