@@ -35,6 +35,8 @@ You need to set some environment variables in your AWS Lambda function:
 
 `GOOGLE_PRIVATE_KEY` - IAM user private key. See _Google Sheets Setup_ below.
 
+`AWS_API_GATEWAY_ENDPOINT` - The endpoint of your AWS API Gateway. Something like `https://<junk>.execute-api.us-east-1.amazonaws.com/<stage>`.
+
 ### Google Sheets Setup
 Follow instructions at https://www.npmjs.com/package/google-spreadsheet#service-account-recommended-method. You'll need to go to https://console.cloud.google.com and create a project, then enable the Sheets API. Then under Credentials > Create credentials > Service account key. You'll be given a JSON file to download and among a bunch of other stuff it will contain your client email and private key.
 

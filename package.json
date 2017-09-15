@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "zip": "zip -r lambda.zip *.js package.json node_modules"
+    "zip": "zip -r lambda.zip *.js package.json node_modules html"
   },
   "dependencies": {
     "bluebird": "^3.5.0",

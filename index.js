@@ -1,46 +1,63 @@
 const spreadsheet = require('./spreadsheet');
+const fs = require('fs');
 
 function run(event, context, callback) {
   if (event.httpMethod === 'GET'
-    && event.queryStringParameters.githubUsername
     && event.queryStringParameters.authCode) {
-    require('lambda-git')().then(() => {
-      console.log('git should now be installed and available for use');
-      spreadsheet.startAssignment(event.queryStringParameters.authCode, event.queryStringParameters.githubUsername)
-      .then(() => {
-        callback(null, {
-          'isBase64Encoded': false,
-          'statusCode': 200,
-          'headers': { 'headerName': 'headerValue' },
-          'body': 'OK' // TODO: Return some HTML which will make the candidate feel good.
-        });
-      })
-      .catch((err) => {
-        callback(null, {
-          'isBase64Encoded': false,
-          'statusCode': 400,
-          headers: {},
-          'body': err.message
+    // If a GitHub username was provided, then we start the assignment.
+    if (event.queryStringParameters.githubUsername) {
+      require('lambda-git')().then(() => {
+        console.log('git should now be installed and available for use');
+        spreadsheet.startAssignment(event.queryStringParameters.authCode, event.queryStringParameters.githubUsername)
+        .then(() => {
+          callback(null, {
+            'isBase64Encoded': false,
+            'statusCode': 200,
+            'headers': { 'headerName': 'headerValue' },
+            'body': 'OK' // TODO: Return some HTML which will make the candidate feel good.
+          });
+        })
+        .catch((err) => {
+          callback(null, {
+            'isBase64Encoded': false,
+            'statusCode': 400,
+            headers: {},
+            'body': err.message
+          });
         });
       });
-    });
+    } else {
+      // If an authCode was provided but no GitHub username, then we need to return
+      // an HTML page which prompts the candidate to enter their GitHub username.
+      // We don't validate the authCode in this path since it doesn't matter.
+      console.log('No GitHub username provided; returning HTML to ask for it.');
+      const html = fs.readFileSync('html/githubUsernameForm.html', {encoding: 'utf8'});
+      console.log(html);
+      callback(null, {
+        'isBase64Encoded': false,
+        'statusCode': 200,
+        'headers': { 'content-type': 'text/html' },
+        'body': html
+      });
+    }
   } else if (event.httpMethod === 'POST') {
-    const body = event.body; //JSON.parse(event.body);
+    const body = JSON.parse(event.body);
     if (body.assignment && body.candidateName && body.duration) {
-      repos.addCandidate(body.candidateName, body.assignment, body.duration)
+      spreadsheet.addCandidate(body.candidateName, body.assignment, body.duration)
       .then((row) => {
+        const html = `<html><body>Provide this URL to your candidate: <B>${process.env.AWS_API_GATEWAY_ENDPOINT}/assignment?authCode=${row.authcode}</B></body></html>`;
         callback(null, {
           'isBase64Encoded': false,
           'statusCode': 200,
-          'headers': { 'headerName': 'headerValue' },
-          'body': 'Auth Code = ' + row.authcode // TODO: Return nice HTML to copy and paste a link to candidate.
+          'headers': { 'Content-Type': 'text/html' },
+          'body': html
         });
       });
     } else {
       callback(null, {
         'isBase64Encoded': false,
         'statusCode': 400,
-        'headers': { 'headerName': 'headerValue' },
+        'headers': {},
         'body': JSON.stringify(event)
       });
     }
