@@ -1,5 +1,6 @@
 const spreadsheet = require('./spreadsheet');
 const fs = require('fs');
+const str = require('underscore.string');
 
 function run(event, context, callback) {
   console.log('Event = ', JSON.stringify(event));
@@ -10,13 +11,13 @@ function run(event, context, callback) {
       require('lambda-git')().then(() => {
         console.log('git should now be installed and available for use');
         spreadsheet.startAssignment(event.queryStringParameters.authCode, event.queryStringParameters.githubUsername)
-        .then(() => {
+        .then((githubRepoUrl) => {
           console.log('Assignment started successfully');
           callback(null, {
             'isBase64Encoded': false,
             'statusCode': 200,
             'headers': { 'content-type': 'text/html' },
-            'body': fs.readFileSync('html/success.html', {encoding: 'utf8'})
+            'body': str.sprintf(fs.readFileSync('html/success.html', {encoding: 'utf8'}), githubRepoUrl, githubRepoUrl)
           });
         })
         .catch((err) => {

@@ -64,6 +64,7 @@ function initializeCandidate(params) {
   .then(grantCollaboratorAccess)
   .then(() => {
     console.log('repos completed successfully');
+    return `https://github.com/${process.env.GITHUB_ORG}/${candidateRepo}`;
   })
   .catch((err) => {
     console.log('Caught error in repos ', err);

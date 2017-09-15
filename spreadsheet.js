@@ -93,11 +93,11 @@ function startAssignment(authcode, githubUsername) {
           templateRepo: candidate.assignment,
           candidateName: candidate.candidatename,
           candidateGitHubUsername: githubUsername
-        }).then(() => {
+        }).then((repo) => {
           candidate.gitHub = githubUsername;
           candidate.assigned = moment().format();
           candidate.save();
-          resolve();
+          resolve(repo);
         });
       });
     });
