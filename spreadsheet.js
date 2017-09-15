@@ -2,26 +2,30 @@ const gs = require('google-spreadsheet');
 const _ = require('underscore');
 const moment = require('moment');
 const repos = require('./repos');
+const Promise = require('bluebird');
 
-function readSpreadsheet() {
+function getWorksheet() {
+  return new Promise((resolve, reject) => {
   const doc = new gs(process.env.SPREADSHEET_KEY);
   doc.useServiceAccountAuth({
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
     private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n') // Do magic to replace \n with actual newlines
   }, (err) => {
     if (err) {
-      console.error(err);
-      return;
+      return reject(err);
     }
     doc.getInfo((err, info) => {
       if (err) {
-        console.error('Error getting info:', err);
-        return;
+        return reject(err);
       }
-      const sheet = info.worksheets[0];
-      getRowsFromSheet(sheet);
+      resolve(info.worksheets[0]);
     });
   });
+}
+
+function readSpreadsheet() {
+  getWorksheet()
+  .then(getRowsFromSheet);
 }
 
 function getRowsFromSheet(sheet) {
@@ -32,7 +36,7 @@ function getRowsFromSheet(sheet) {
   sheet.getRows({
     offset: 0,
     limit: 50,
-    orderby: 'start',
+    orderby: 'assigned',
     reverse: true
   }, (err, rows) => {
     if (err) {
