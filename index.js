@@ -3,7 +3,7 @@ const spreadsheet = require('./spreadsheet');
 function run(event, context, callback) {
   if (event.httpMethod === 'GET'
     && event.queryStringParameters.githubUsername
-    && event.queryStringParameters.authCode)
+    && event.queryStringParameters.authCode) {
     require('lambda-git')().then(() => {
       console.log('git should now be installed and available for use');
       spreadsheet.startAssignment(event.queryStringParameters.authCode, event.queryStringParameters.githubUsername)
@@ -15,6 +15,14 @@ function run(event, context, callback) {
           'body': 'OK' // TODO: Return some HTML which will make the candidate feel good.
         });
       })
+      .catch((err) => {
+        callback(null, {
+          'isBase64Encoded': false,
+          'statusCode': 400,
+          headers: {},
+          'body': err.message;
+        });
+      });
     });
   } else if (event.httpMethod === 'POST') {
     console.log('POST event = ', event);
@@ -25,9 +33,11 @@ function run(event, context, callback) {
       'headers': { 'headerName': 'headerValue' },
       'body': JSON.stringify(event)
     });
+  } else {
+    console.log('Completely unexpected event: ', event);
   }
 }
 
 module.exports = {
-  run: run
+  handler: run
 }
