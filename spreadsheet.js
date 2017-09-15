@@ -95,7 +95,7 @@ function startAssignment(authcode, githubUsername) {
           candidate.gitHub = githubUsername;
           candidate.assigned = moment().toString();
           candidate.save();
-        })
+        });
       });
     });
   });
