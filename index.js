@@ -25,14 +25,25 @@ function run(event, context, callback) {
       });
     });
   } else if (event.httpMethod === 'POST') {
-    console.log('POST event = ', event);
-    // TODO: Hook this up to spreadsheet.addCandidate once we've figured out how to pass everything correctly.
-    callback(null, {
-      'isBase64Encoded': false,
-      'statusCode': 200,
-      'headers': { 'headerName': 'headerValue' },
-      'body': JSON.stringify(event)
-    });
+    const body = event.body; //JSON.parse(event.body);
+    if (body.assignment && body.candidateName && body.duration) {
+      repos.addCandidate(body.candidateName, body.assignment, body.duration)
+      .then((row) => {
+        callback(null, {
+          'isBase64Encoded': false,
+          'statusCode': 200,
+          'headers': { 'headerName': 'headerValue' },
+          'body': 'Auth Code = ' + row.authcode // TODO: Return nice HTML to copy and paste a link to candidate.
+        });
+      });
+    } else {
+      callback(null, {
+        'isBase64Encoded': false,
+        'statusCode': 400,
+        'headers': { 'headerName': 'headerValue' },
+        'body': JSON.stringify(event)
+      });
+    }
   } else {
     console.log('Completely unexpected event: ', event);
   }
