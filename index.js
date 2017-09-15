@@ -68,14 +68,18 @@ function run(event, context, callback) {
           'body': fs.readFileSync('html/candidateForm.html', {encoding: 'utf8'})
         });
       }
+    } else if (event.action === 'scanForExpiredWindows'){
+      console.log('Scanning for expired windows...');
+      spreadsheet.scanForExpiredWindows()
+      .then(callback);
     } else {
-    console.log('Completely unexpected event: ', event);
-    callback(null, {
-      'isBase64Encoded': false,
-      'statusCode': 404,
-      'headers': { 'Content-Type': 'text/html' },
-      'body': ''
-    });
+      console.log('Completely unexpected event: ', event);
+      callback(null, {
+        'isBase64Encoded': false,
+        'statusCode': 404,
+        'headers': { 'Content-Type': 'text/html' },
+        'body': ''
+      });
   }
 }
 

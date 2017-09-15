@@ -95,7 +95,7 @@ function startAssignment(authcode, githubUsername) {
           candidateGitHubUsername: githubUsername
         }).then(() => {
           candidate.gitHub = githubUsername;
-          candidate.assigned = moment().toString();
+          candidate.assigned = moment().format();
           candidate.save();
           resolve();
         });
@@ -107,10 +107,50 @@ function startAssignment(authcode, githubUsername) {
   });
 }
 
+function scanForExpiredWindows() {
+  return getWorksheet()
+  .then((sheet) => {
+    return new Promise((resolve, reject) => {
+      // Get rows from the sheet. We order by assigned and reverse the returned rows
+      // so that we get candidates who have not been assigned yet.
+      sheet.getRows({
+        offset: 0,
+        limit: 50,
+        orderby: 'assigned',
+        reverse: true
+      }, (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+
+        expiredRows = _.filter(rows, (row) => {
+          return !row.revoked && moment().isAfter(moment(row.assigned).add(row.window, 'hours'));
+        });
+
+        Promise.all(_.map(expiredRows, (row) => {
+          return repos.removeCollaboratorAccess({
+            candidateGitHubUsername: row.github,
+            templateRepo: row.assignment
+          })
+          .then(() => {
+            row.revoked = moment().format();
+            return row.save();
+          });
+        }))
+        .then(resolve)
+        .catch(reject);
+      });
+    });
+  });
+}
+
 module.exports = {
   startAssignment,
-  addCandidate
+  addCandidate,
+  scanForExpiredWindows
 }
+
+//scanForExpiredWindows();
 
 //startAssignment('3009270414', 'Furchin');
 

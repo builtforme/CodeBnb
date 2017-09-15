@@ -79,6 +79,8 @@ function removeCollaboratorAccess(params) {
     }).then(res => {
       resolve(res);
     }).catch(err => {
+      const s = JSON.stringify(params);
+      console.error(`Error removing collaborator access. Message: ${err.message}; params: ${s}`);
       reject(err);
     });
   });
