@@ -1,11 +1,16 @@
 <html>
   <head>
-    CodeBnb Self-Service Software Assignment Distribution
+    <title>Self-Service Software Assignment Distribution</title>
+    <script>
+    function handleSubmit() {
+      const url = window.location.href + '&githubUsername=' + document.getElementById('githubUsername').value;
+      document.location.href = url;
+    }
+    </script>
   </head>
   <body>
-    <form method="POST" target="#">
-      <input label="GitHub Username" type="text">
-      <input type="Submit">
-    </form>
+    Please provide your GitHub username. Your assignment will begin immediately when you click "Begin Assignment" so please be sure that you are ready before proceeding. <BR><BR>
+    GitHub Username: <input label="GitHub Username" type="text" id="githubUsername">&nbsp;
+    <button onClick="javascript:handleSubmit();">Begin Assignment</button>
   </body>
 </html>

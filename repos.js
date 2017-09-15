@@ -22,6 +22,7 @@ function initializeCandidate(params) {
 
   // Step 1 - create the repo
   function createRepo() {
+    console.log('createRepo called');
     return github.repos.createForOrg({
       name: `${candidateRepo}`,
       org: org,
@@ -34,6 +35,7 @@ function initializeCandidate(params) {
   // Based on https://github.com/blog/1270-easier-builds-and-deployments-using-git-over-https-and-oauth
   function cloneTemplateRepo() {
     return new Promise((resolve, reject) => {
+      console.log('cloneTemplateRepo called');
       exec(`mkdir /tmp/${candidateRepo} && cd /tmp/${candidateRepo} && git init && git pull https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${templateRepo} && git remote add origin https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} && git push origin master && cd /tmp && rm -rf ${candidateRepo}`, (err, stdout, stderr) => {
         if (err) {
           console.error(`exec error: ${err}`);
@@ -46,17 +48,23 @@ function initializeCandidate(params) {
 
   // Step 3 - Grant the user collaborator access to the new repo
   function grantCollaboratorAccess() {
+    console.log('addCollaborator called');
     return github.repos.addCollaborator({
       owner: org,
       repo: candidateRepo,
       username: candidateGitHubUsername,
       permission: 'push' // Options are 'pull', 'push', 'admin'.
     })
+    .then(()=> {console.log('Add collaborator success')})
+    .catch((err)=> {console.log('Add collaborator error ', err);});
   }
 
   return createRepo()
   .then(cloneTemplateRepo)
-  .then(grantCollaboratorAccess);
+  .then(grantCollaboratorAccess)
+  .catch((err) => {
+    console.log('Caught error in repos ', err);
+  });
 }
 
 function removeCollaboratorAccess(params) {

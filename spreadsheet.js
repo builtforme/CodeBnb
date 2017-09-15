@@ -30,7 +30,7 @@ function addCandidate(candidatename, assignment, windowDuration) {
     assignment,
     'window': windowDuration,
     authcode: Math.floor(Math.random() * 10000000000),
-    created: moment().toString()
+    created: moment().format()
   })
 }
 
@@ -82,10 +82,12 @@ function startAssignment(authcode, githubUsername) {
           return reject(new Error('Used Authentication Code'));
         }
 
+        console.log('parsing cadidate.created');
         if (moment(candidate.created).isBefore(moment().subtract(30, 'days'))) {
           console.log(`Attempt to use expired auth code ${authcode}`);
           return reject(new Error('Expired Authentication Code'));
         }
+        console.log('parsed candidate.created');
 
         repos.initializeCandidate({
           templateRepo: candidate.assignment,
@@ -98,6 +100,9 @@ function startAssignment(authcode, githubUsername) {
         });
       });
     });
+  })
+  .catch((err) => {
+    console.log('Caught error in spreadsheet startAssignment: ', err);
   });
 }
 

@@ -10,6 +10,7 @@ function run(event, context, callback) {
         console.log('git should now be installed and available for use');
         spreadsheet.startAssignment(event.queryStringParameters.authCode, event.queryStringParameters.githubUsername)
         .then(() => {
+          console.log('Assignment started successfully');
           callback(null, {
             'isBase64Encoded': false,
             'statusCode': 200,
@@ -18,6 +19,7 @@ function run(event, context, callback) {
           });
         })
         .catch((err) => {
+          console.log('caught error ', err);
           callback(null, {
             'isBase64Encoded': false,
             'statusCode': 400,
@@ -32,7 +34,6 @@ function run(event, context, callback) {
       // We don't validate the authCode in this path since it doesn't matter.
       console.log('No GitHub username provided; returning HTML to ask for it.');
       const html = fs.readFileSync('html/githubUsernameForm.html', {encoding: 'utf8'});
-      console.log(html);
       callback(null, {
         'isBase64Encoded': false,
         'statusCode': 200,
