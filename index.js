@@ -72,7 +72,14 @@ function run(event, context, callback) {
     } else if (event.action === 'scanForExpiredWindows'){
       console.log('Scanning for expired windows...');
       spreadsheet.scanForExpiredWindows()
-      .then(callback);
+      .then(() => {
+        console.log('scan for expired windows successful.');
+        callback(null);
+      })
+      .catch((err) => {
+        console.log('Scan for expired windows failed. Err = ', err);
+        callback(err);
+      });
     } else {
       console.log('Completely unexpected event: ', event);
       callback(null, {

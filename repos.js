@@ -73,6 +73,7 @@ function initializeCandidate(params) {
 
 function removeCollaboratorAccess(params) {
   return new Promise((resolve, reject) => {
+    console.log('Calling remove collaborator. Params = ', params);
     github.repos.removeCollaborator({
       owner: org,
       repo: `${params.templateRepo}-${params.candidateGitHubUsername}`,

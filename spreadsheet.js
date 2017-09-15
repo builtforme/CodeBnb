@@ -127,16 +127,30 @@ function scanForExpiredWindows() {
           return !row.revoked && moment().isAfter(moment(row.assigned).add(row.window, 'hours'));
         });
 
-        Promise.all(_.map(expiredRows, (row) => {
-          return repos.removeCollaboratorAccess({
-            candidateGitHubUsername: row.github,
-            templateRepo: row.assignment
-          })
-          .then(() => {
-            row.revoked = moment().format();
-            return row.save();
-          });
-        }))
+        console.log(`Found ${expiredRows.length} expired rows.`);
+
+        const revocations = [];
+
+        _.each(expiredRows, (row) => {
+          row.revoked = moment().format();
+          row.save();
+          revocations.push(new Promise((resolve, reject) => {
+            // Google has ugly cruft.
+            delete row._xml;
+
+            console.log('Removing access for expired row ', row);
+
+            return repos.removeCollaboratorAccess({
+              candidateGitHubUsername: row.github,
+              templateRepo: row.assignment
+            })
+            .then(resolve)
+            .catch(reject);
+          }));
+        });
+
+        console.log('Waiting for ' + revocations.length + ' revocations...');
+        Promise.all(revocations)
         .then(resolve)
         .catch(reject);
       });
