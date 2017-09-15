@@ -87,51 +87,25 @@ function startAssignment(authcode, githubUsername) {
           return reject(new Error('Expired Authentication Code'));
         }
 
-        // TODO: Do the repos thing.
-        console.log(candidate);
+        repos.initializeCandidate({
+          templateRepo: candidate.assignment,
+          candidateName: candidate.candidatename,
+          candidateGitHubUsername: githubUsername
+        }).then(() => {
+          candidate.gitHub = githubUsername;
+          candidate.assigned = moment().toString();
+          candidate.save();
+        })
       });
     });
   });
 }
 
-// function getRowsFromSheet(sheet) {
-//
-//
-//     _.each(rows, (candidate) => {
-//       // If the candidate's start date is today we need to enable the software engineering assignment.
-//       // If the candidate's window ends today we need to revoke access.
-//       // All this works because we expect this code to be run only once per day.
-//       const parsedStart = moment(candidate.start);
-//       const today = moment();
-//       const parsedEnd = moment(candidate.start).add(candidate.window, 'hours');
-//       console.log(`Parsed Start Date ${parsedStart}; today is ${today}; parsed end date is ${parsedEnd}`);
-//       if (parsedStart.isSame(today, 'day')) {
-//         console.log(`Starting assignment for ${candidate.candidatename}, officially starting at ${candidate.start}`);
-//         repos.initializeCandidate({
-//           templateRepo: candidate.assignment,
-//           candidateGitHubUsername: candidate.github,
-//           candidateName: candidate.candidatename
-//         });
-//         candidate.assigned = today.toString();
-//         candidate.save();
-//       } else if (parsedEnd.isSame(today, 'day')) {
-//         console.log(`Ending assignment for ${candidate.candidatename}, officially started at ${candidate.start} with a ${candidate.window}-hour window.`);
-//         repos.removeCollaboratorAccess({
-//           templateRepo: candidate.assignment,
-//           candidateGitHubUsername: candidate.github
-//         }).then(() => {
-//           candidate.revoked = today.toString();
-//           candidate.save();
-//         });
-//       }
-//     });
-//   });
-// }
+module.exports = {
+  startAssignment,
+  addCandidate
+}
 
-// module.exports = {
-//   readSpreadsheet,
-// }
-
-startAssignment('3009270414', 'Furchin');
+//startAssignment('3009270414', 'Furchin');
 
 //addCandidate('Michal Bryc', 'battleship', 72);
