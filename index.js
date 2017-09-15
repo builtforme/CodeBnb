@@ -20,7 +20,7 @@ function run(event, context, callback) {
           'isBase64Encoded': false,
           'statusCode': 400,
           headers: {},
-          'body': err.message;
+          'body': err.message
         });
       });
     });
