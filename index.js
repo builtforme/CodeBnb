@@ -49,7 +49,7 @@ function run(event, context, callback) {
     if (event.queryStringParameters.assignment
       && event.queryStringParameters.candidateName
       && event.queryStringParameters.duration) {
-        spreadsheet.addCandidate(body.candidateName, body.assignment, body.duration)
+        spreadsheet.addCandidate(event.queryStringParameters.candidateName, event.queryStringParameters.assignment, event.queryStringParameters.duration)
         .then((row) => {
           const html = `<html><body>Provide this URL to your candidate: <B>${process.env.AWS_API_GATEWAY_ENDPOINT}/assignment?authCode=${row.authcode}</B></body></html>`;
           callback(null, {
