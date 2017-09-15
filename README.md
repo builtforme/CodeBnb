@@ -11,9 +11,11 @@ This is intended to be run as a scheduled task, once per day, under AWS Lambda (
 5. Revoke the outside collaborator access at the end of the assignment window, based on the duration specified in the Google Spreadsheet.
 
 ## Usage
-When you have a new candidate, simply go into the Google Spreadsheet and add a new row to the end of the spreadsheet. Fill out all columns except _assigned_ and _revoked_ which will be automatically populated by CodeBnb when it takes action on the candidate.
+When you have a new candidate, simply go to `$AWS_API_GATEWAY_ENDPOINT`/`<stage>`/addcandidate?authorization=`$ADD_CANDIDATE_AUTHORIZATION_CODE` and fill out the form (which asks for the candidate's name, the assignment you'd like to give them, and the duration of their assignment). You'll be given a URL which you give to the candidate. This URL is valid for 30 days and allows the candidate to specify their GitHub username and start the assignment whenever they would like.
 
 At the end of the assignment window, simply peruse the candidate's repo and judge their work, and proceed with your hiring process accordingly.
+
+All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don't have to edit the spreadsheet at all.
 
 ## Setup
 
@@ -35,9 +37,17 @@ You need to set some environment variables in your AWS Lambda function:
 
 `GOOGLE_PRIVATE_KEY` - IAM user private key. See _Google Sheets Setup_ below.
 
-`AWS_API_GATEWAY_ENDPOINT` - The endpoint of your AWS API Gateway. Something like `https://<junk>.execute-api.us-east-1.amazonaws.com/<stage>`.
+`AWS_API_GATEWAY_ENDPOINT` - The endpoint of your AWS API Gateway. Something like `https://<junk>.execute-api.us-east-1.amazonaws.com/<stage>`. See _AWS API Gateway Setup_ below.
 
 `ADD_CANDIDATE_AUTHORIZATION_CODE` - Any secret that needs to be provided in order to add a candidate to the list of permitted candidates.
+
+### AWS API Gateway Setup
+Configure a new API Gateway with two resources:
+
+1. `/addcandidate`
+2. `/assignment`
+
+Add a `GET` method on each. Configure each method as a `LAMBDA_PROXY` to your AWS Lambda function.
 
 ### Google Sheets Setup
 Follow instructions at https://www.npmjs.com/package/google-spreadsheet#service-account-recommended-method. You'll need to go to https://console.cloud.google.com and create a project, then enable the Sheets API. Then under Credentials > Create credentials > Service account key. You'll be given a JSON file to download and among a bunch of other stuff it will contain your client email and private key.
@@ -49,10 +59,11 @@ CodeBnb expects a Google Spreadsheet with the following columns:
 Column | Description
 ------------|------------
 Candidate Name | The candidate's real name, which will be used in the GitHub repo description to help identify the candidate.
-GitHub | The candidate's GitHub account username, which is the GitHub account which will be granted `push` rights to the repository.
 Assignment |  The name of the GitHub repository that will be cloned into a candidate-specific repository in which the candidate will do their assignment. The candidate-specific repository will be named `<assignment>-<github>`.
-Start | YYYY-MM-DD format date on which access should be granted.
 Window | The assignment duration, in hours. This is how long candidates will have access to their repos. This value should be a multiple of 24 (the CodeBnb run frequency).
+Auth Code | This column records the auth code which prevents candidates from merely granting themselves access until they've been whitelisted.
+Created | This column records the date each row was inserted by CodeBnb.
+GitHub | The candidate's GitHub account username, which is the GitHub account which will be granted `push` rights to the repository.
 assigned | CodeBnb will record a timestamp of when access is granted to the repo. (Leave this column blank when adding new candidates).
 revoked | CodeBnb will record a timestamp of when access is revoked from the repo. (Leave this column blank when adding new candidates).
 
