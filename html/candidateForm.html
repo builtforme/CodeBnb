@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Add Candidate</title>
+    <script>
+    function handleSubmit() {
+      const url = window.location.href + '&candidateName=' + document.getElementById('candidateName').value
+        + '&assignment=' + document.getElementById('assignment').value
+        + '&duration=' + document.getElementById('duration').value;
+      document.location.href = url;
+    }
+    </script>
+  </head>
+  <body>
+    Fill out this form to generate a URL to send to the candidate which will allow them to start their assignment.<BR><BR>
+      <table>
+        <tr><td>Candidate's Full Name:</td><td><input type="text" id="candidateName"></td></tr>
+        <tr><td>Assignment:</td><td><input type="text" id="assignment"></td></tr>
+        <tr><td>Duration (hours):</td><td><input type="text" id="duration"></td></tr>
+        <tr><td>&nbsp;</td><td><button onClick="javascript:handleSubmit();">Get Assignment URL</button></td></tr>
+      </table>
+
+  </body>
+</html>
