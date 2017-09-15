@@ -15,7 +15,7 @@ function run(event, context, callback) {
           callback(null, {
             'isBase64Encoded': false,
             'statusCode': 200,
-            'headers': { 'headerName': 'headerValue' },
+            'headers': { 'content-type': 'text/html' },
             'body': fs.readFileSync('html/success.html', {encoding: 'utf8'})
           });
         })
