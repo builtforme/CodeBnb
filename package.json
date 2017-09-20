@@ -1,6 +1,7 @@
 {
+  "version": "2.0.0",
   "scripts": {
-    "zip": "zip -r lambda.zip *.js package.json node_modules"
+    "zip": "zip -r lambda.zip *.js package.json node_modules html"
   },
   "dependencies": {
     "bluebird": "^3.5.0",
@@ -8,6 +9,7 @@
     "google-spreadsheet": "^2.0.4",
     "lambda-git": "^0.1.1",
     "moment": "^2.18.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "underscore.string": "^3.3.4"
   }
 }
