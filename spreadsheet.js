@@ -3,6 +3,7 @@ const _ = require('underscore');
 const moment = require('moment');
 const repos = require('./repos');
 const Promise = require('bluebird');
+const email = require('./email');
 
 function getWorksheet() {
   return new Promise((resolve, reject) => {
@@ -144,6 +145,7 @@ function scanForExpiredWindows() {
               candidateGitHubUsername: row.github,
               templateRepo: row.assignment
             })
+            .then(email.sendRevocationNotification(row.candidatename))
             .then(resolve)
             .catch(reject);
           }));

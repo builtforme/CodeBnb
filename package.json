@@ -4,6 +4,7 @@
     "zip": "zip -r lambda.zip *.js package.json node_modules html"
   },
   "dependencies": {
+    "aws-sdk": "^2.119.0",
     "bluebird": "^3.5.0",
     "github": "^11.0.0",
     "google-spreadsheet": "^2.0.4",
