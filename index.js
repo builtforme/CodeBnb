@@ -1,6 +1,7 @@
 const spreadsheet = require('./spreadsheet');
 const fs = require('fs');
 const str = require('underscore.string');
+const email = require('./email');
 
 function run(event, context, callback) {
   console.log('Event = ', JSON.stringify(event));
@@ -80,6 +81,17 @@ function run(event, context, callback) {
         console.log('Scan for expired windows failed. Err = ', err);
         callback(err);
       });
+    } else if (event.action === 'sendTestNotification') {
+      email.sendRevocationNotification('TEST USER')
+      .then(() => {
+        callback(null, {
+          'isBase64Encoded': false,
+          'statusCode': 200,
+          'headers': { 'Content-Type': 'text/html' },
+          'body': `Email sent successfully to ${process.env.REVOCATION_NOTIFICATION_RECEPIENT}`
+        });
+      })
+      .catch(callback);
     } else {
       console.log('Completely unexpected event: ', event);
       callback(null, {

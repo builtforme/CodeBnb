@@ -41,6 +41,10 @@ You need to set some environment variables in your AWS Lambda function:
 
 `ADD_CANDIDATE_AUTHORIZATION_CODE` - Any secret that needs to be provided in order to add a candidate to the list of permitted candidates.
 
+`EMAIL_FROM` - The email address used as the sender for email-based notifications.
+
+`REVOCATION_NOTIFICATION_RECEPIENT` - Email address to receive notifications when a candidate's access is revoked.
+
 ### AWS API Gateway Setup
 Configure a new API Gateway with two resources:
 
