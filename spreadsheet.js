@@ -1,9 +1,12 @@
 const gs = require('google-spreadsheet');
 const _ = require('underscore');
+_.str = require('underscore.string');
 const moment = require('moment');
 const repos = require('./repos');
 const Promise = require('bluebird');
 const email = require('./email');
+
+const INVITATION_VALID_FOR_DAYS = 30;
 
 function getWorksheet() {
   return new Promise((resolve, reject) => {
@@ -83,12 +86,10 @@ function startAssignment(authcode, githubUsername) {
           return reject(new Error('Used Authentication Code'));
         }
 
-        console.log('parsing cadidate.created');
-        if (moment(candidate.created).isBefore(moment().subtract(30, 'days'))) {
+        if (moment(candidate.created).isBefore(moment().subtract(INVITATION_VALID_FOR_DAYS, 'days'))) {
           console.log(`Attempt to use expired auth code ${authcode}`);
           return reject(new Error('Expired Authentication Code'));
         }
-        console.log('parsed candidate.created');
 
         repos.initializeCandidate({
           templateRepo: candidate.assignment,
@@ -105,6 +106,42 @@ function startAssignment(authcode, githubUsername) {
   })
   .catch((err) => {
     console.log('Caught error in spreadsheet startAssignment: ', err);
+  });
+}
+
+function scanForExpiringInvitations() {
+  return getWorksheet()
+  .then((sheet) => {
+    return new Promise((resolve, reject) => {
+      // Get rows from the sheet. We order by assigned and reverse the returned rows
+      // so that we get candidates who have not been assigned yet.
+      sheet.getRows({
+        offset: 0,
+        limit: 50,
+        orderby: 'assigned',
+        reverse: true
+      }, (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+
+        expiringInvitations = _.filter(rows, (row) => {
+          console.log(`Assigned: ${row.assigned}`);
+          console.log(`now: ${moment()}`);
+          return !row.revoked && moment().isSame(moment(row.created).add(INVITATION_VALID_FOR_DAYS, 'days'), 'day');
+        });
+
+        console.log(`Found ${expiringInvitations.length} invitations expiring in the next day.`);
+
+        if (expiringInvitations.length > 0) {
+          email.sendInvitationExpiringNotification(_.str.join(', ', _.pluck(expiringInvitations, 'candidatename')))
+          .then(resolve)
+          .catch(reject);
+        } else {
+          resolve();
+        }
+      });
+    });
   });
 }
 
@@ -163,7 +200,8 @@ function scanForExpiredWindows() {
 module.exports = {
   startAssignment,
   addCandidate,
-  scanForExpiredWindows
+  scanForExpiredWindows,
+  scanForExpiringInvitations
 }
 
 //scanForExpiredWindows();
