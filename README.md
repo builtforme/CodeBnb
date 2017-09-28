@@ -5,10 +5,12 @@ The name "CodeBnb" is a play on AirBnb, since the candidates get use of a reposi
 
 This is intended to be run as a scheduled task, once per day, under AWS Lambda (or really any other mechanism). It is not idempotent and should not be run more than once per day. It performs the following actions:
 
-1. Query the Google Spreadsheet to identify any individuals whose assignment window is starting in the next 24 hours.
-2. Clones the assignment template repository into a repository specifically for the candidate. The spreadsheet controls which assignment repository template is used. (GitHub does not allow a repository to be forked within the same organization.)
+1. Creates a unique invitation for candidates to undertake the project starting at their convenience.
+2. When a candidate chooses by clicking the invitation link, clones the assignment template repository into a repository specifically for the candidate. The spreadsheet controls which assignment repository template is used. (GitHub does not allow a repository to be forked within the same organization.)
 3. Grant the candidate's GitHub account outside collaborator `push` access to the repository. GitHub will automatically notify the candidate who has to accept the invitation.
 5. Revoke the outside collaborator access at the end of the assignment window, based on the duration specified in the Google Spreadsheet.
+6. Notifies you via email when you should review a candidate's work.
+7. Notifies you via email when a candidate's invitation is about to expire.
 
 ## Usage
 When you have a new candidate, simply go to `$AWS_API_GATEWAY_ENDPOINT`/`<stage>`/addcandidate?authorization=`$ADD_CANDIDATE_AUTHORIZATION_CODE` and fill out the form (which asks for the candidate's name, the assignment you'd like to give them, and the duration of their assignment). You'll be given a URL which you give to the candidate. This URL is valid for 30 days and allows the candidate to specify their GitHub username and start the assignment whenever they would like.
