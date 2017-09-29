@@ -81,6 +81,17 @@ function run(event, context, callback) {
         console.log('Scan for expired windows failed. Err = ', err);
         callback(err);
       });
+    }  else if (event.action === 'scanForExpiringInvitations'){
+      console.log('Scanning for expiring invitations...');
+      spreadsheet.scanForExpiringInvitations()
+      .then(() => {
+        console.log('scan for expiring invitations successful.');
+        callback(null);
+      })
+      .catch((err) => {
+        console.log('Scan for expiring invitations failed. Err = ', err);
+        callback(err);
+      });
     } else if (event.action === 'sendTestNotification') {
       email.sendRevocationNotification('TEST USER')
       .then(() => {
