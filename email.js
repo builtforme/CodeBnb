@@ -6,9 +6,9 @@ const ses = new aws.SES({
 });
 
 
-exports.sendRevocationNotification = (candidateName) => {
+exports.sendRevocationNotification = (candidateName, emailService = ses) => {
   return new Promise((resolve, reject) => {
-    ses.sendEmail({
+    emailService.sendEmail({
       Destination: {
         ToAddresses: [process.env.REVOCATION_NOTIFICATION_RECEPIENT]
       },
@@ -34,7 +34,7 @@ exports.sendRevocationNotification = (candidateName) => {
 
 exports.sendInvitationExpiringNotification = (candidateNames) => {
   return new Promise((resolve, reject) => {
-    ses.sendEmail({
+    emailService.sendEmail({
       Destination: {
         ToAddresses: [process.env.REVOCATION_NOTIFICATION_RECEPIENT]
       },
