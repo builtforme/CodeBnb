@@ -47,13 +47,16 @@ You need to set some environment variables in your AWS Lambda function:
 
 `REVOCATION_NOTIFICATION_RECEPIENT` - Email address to receive notifications when a candidate's access is revoked.
 
-### AWS API Gateway Setup
+### AWS API Gateway Manual Setup
 Configure a new API Gateway with two resources:
 
 1. `/addcandidate`
 2. `/assignment`
 
 Add a `GET` method on each. Configure each method as a `LAMBDA_PROXY` to your AWS Lambda function.
+
+### AWS API Gateway CloudFormation Setup
+Follow this [README](deploy/aws/README.md) instructions to deploy API Gateway and related resources automatically with CloudFormation.
 
 ### Google Sheets Setup
 Follow instructions at https://www.npmjs.com/package/google-spreadsheet#service-account-recommended-method. You'll need to go to https://console.cloud.google.com and create a project, then enable the Sheets API. Then under Credentials > Create credentials > Service account key. You'll be given a JSON file to download and among a bunch of other stuff it will contain your client email and private key.

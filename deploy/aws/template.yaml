@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda handler for API Gateway
+Resources:
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handler.hello #UPDATE
+      Runtime: nodejs6.10
+      CodeUri: s3://sample-nodejs-lambda/lambda.zip #UPDATE
+      Description: Lambda handler for API Gateway
+      MemorySize: 256
+      Timeout: 60
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 0 * * ? *)
+        ProxyApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /{proxy+}
+            Method: GET
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title:
+            Ref: AWS::StackName
+        paths:
+          "/{proxy+}":
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: GET
+                type: aws_proxy
+                uri:
+                  !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations"
+              responses: {}
+        swagger: '2.0'
+      Variables:
+        LambdaFunctionName: !Ref LambdaFunction
+
+Outputs:
+  ApiUrl:
+    Description: URL of your API endpoint
+    Value: !Sub "https://${ApiGatewayApi}.execute-api.${AWS::Region}.amazonaws.com/prod"
