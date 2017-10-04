@@ -74,3 +74,10 @@ assigned | CodeBnb will record a timestamp of when access is granted to the repo
 revoked | CodeBnb will record a timestamp of when access is revoked from the repo. (Leave this column blank when adding new candidates).
 
 Note: Column names are case- and whitespace-insensitive. For example, "Candidate Name" and "candidatename" are both acceptable.
+
+### Running Unit Tests
+
+In order to run the unit test suite, run the command from within the root directory.
+```
+npm test
+```
