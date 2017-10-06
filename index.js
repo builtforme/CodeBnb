@@ -1,3 +1,6 @@
+// Needs to be first to load in environment variables
+// from .env file
+require('dotenv').config();
 const spreadsheet = require('./spreadsheet');
 const fs = require('fs');
 const str = require('underscore.string');

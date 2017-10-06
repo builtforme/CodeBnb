@@ -5,7 +5,7 @@ const {exec} = require('child_process');
 const org = process.env.GITHUB_ORG;
 
 const github = new GitHubApi({
-  Promise: require('bluebird'),
+  Promise: Promise,
   timeout: 5000
 });
 
@@ -64,7 +64,7 @@ function initializeCandidate(params) {
   .then(grantCollaboratorAccess)
   .then(() => {
     console.log('repos completed successfully');
-    return `https://github.com/${process.env.GITHUB_ORG}/${candidateRepo}`;
+    return `https://github.com/${org}/${candidateRepo}`;
   })
   .catch((err) => {
     console.log('Caught error in repos ', err);
