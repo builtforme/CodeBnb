@@ -27,6 +27,8 @@ All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don
 3. Select the "Upload a .ZIP file" as your "Code entry type" and upload `lambda.zip` generated in step 1.
 4. Click `Save and test` and troubleshoot, repeating steps 1, 3, and 4 until you see success.
 
+#### Environment Variables
+
 You need to set some environment variables in your AWS Lambda function:
 
 `GITHUB_ORG` - The name of the organization under which software assignments will be created (and in which the template repository lives).
@@ -46,6 +48,8 @@ You need to set some environment variables in your AWS Lambda function:
 `EMAIL_FROM` - The email address used as the sender for email-based notifications.
 
 `REVOCATION_NOTIFICATION_RECEPIENT` - Email address to receive notifications when a candidate's access is revoked.
+
+If running locally, you can simply store these keys in a `.env` file and they will automatically be loaded into your environment.
 
 ### AWS API Gateway Setup
 Configure a new API Gateway with two resources:
