@@ -32,7 +32,7 @@ exports.sendRevocationNotification = (candidateName, emailService = ses) => {
   });
 };
 
-exports.sendInvitationExpiringNotification = (candidateNames) => {
+exports.sendInvitationExpiringNotification = (candidateNames, emailService = ses) => {
   return new Promise((resolve, reject) => {
     emailService.sendEmail({
       Destination: {
