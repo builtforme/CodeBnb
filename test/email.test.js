@@ -1,11 +1,16 @@
 const sinon = require('sinon');
 const email = require('../email');
 
+const getMockEmailService = (sendEmailImpl) => {
+  return {
+    sendEmail: sendEmailImpl
+  };
+};
+
 let mockEmailService;
 beforeEach(() => {
-  mockEmailService = {
-    sendEmail: sinon.spy() // Create a spy for the sendEmail method
-  };
+  // Create a mock email service with a spy implementation of sendEmail
+  mockEmailService = getMockEmailService(sinon.spy());
 });
 
 describe("Email.js", () => {
@@ -27,12 +32,7 @@ describe("Email.js", () => {
 
     describe("Email Service Callback", () => {
       it("should resolve with undefined if no error present", () => {
-        const mockEmailServiceWithNoError = {
-          sendEmail: (options, callback) => {
-            callback(null, {});
-            return sinon.spy();
-          }
-        };
+        const mockEmailServiceWithNoError = getMockEmailService((options, callback) => callback(null, {}));
 
         const resultPromise = email.sendRevocationNotification("MOCK_NAME_1", mockEmailServiceWithNoError);
         return expect(resultPromise).resolves.toEqual(undefined);
@@ -42,12 +42,7 @@ describe("Email.js", () => {
         const mockError = {
           'error': 'This is a mock error'
         };
-        const mockEmailServiceWithError = {
-          sendEmail: (options, callback) => {
-            callback(mockError, {});
-            return sinon.spy();
-          }
-        };
+        const mockEmailServiceWithError = getMockEmailService((options, callback) => callback(mockError, {}));
 
         const resultPromise = email.sendRevocationNotification("MOCK_NAME_1", mockEmailServiceWithError);
         return expect(resultPromise).rejects.toEqual(mockError);
@@ -73,12 +68,7 @@ describe("Email.js", () => {
 
     describe("Email Service Callback", () => {
       it("should resolve with undefined if no error present", () => {
-        const mockEmailServiceWithNoError = {
-          sendEmail: (options, callback) => {
-            callback(null, {});
-            return sinon.spy();
-          }
-        };
+        const mockEmailServiceWithNoError = getMockEmailService((options, callback) => callback(null, {}));
 
         const resultPromise = email.sendInvitationExpiringNotification("MOCK_NAME_1, MOCK_NAME_2", mockEmailServiceWithNoError);
         return expect(resultPromise).resolves.toEqual(undefined);
@@ -88,12 +78,7 @@ describe("Email.js", () => {
         const mockError = {
           'error': 'This is a mock error'
         };
-        const mockEmailServiceWithError = {
-          sendEmail: (options, callback) => {
-            callback(mockError, {});
-            return sinon.spy();
-          }
-        };
+        const mockEmailServiceWithError = getMockEmailService((options, callback) => callback(mockError, {}));
 
         const resultPromise = email.sendInvitationExpiringNotification("MOCK_NAME_1, MOCK_NAME_2", mockEmailServiceWithError);
         return expect(resultPromise).rejects.toEqual(mockError);
