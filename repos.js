@@ -112,6 +112,7 @@ function archiveRepo(params) {
   })
   .catch((err) => {
     console.log('Caught error in archive repo ', err);
+    return Promise.reject(err);
   });
 }
 
