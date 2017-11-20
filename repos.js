@@ -71,6 +71,50 @@ function initializeCandidate(params) {
   });
 }
 
+function archiveRepo(params) {
+  const templateRepo = params.templateRepo;
+  const candidateGitHubUsername = params.candidateGitHubUsername;
+  const archiveRepo = process.env.ARCHIVE_REPO;
+  const candidateRepo = `${templateRepo}-${candidateGitHubUsername}`;
+  const candidateName = params.candidateName;
+
+  function copyCandidateRepoToArchiveRepo() {
+    return new Promise((resolve, reject) => {
+      console.log('cloneCandidateRepo called');
+      exec(`cd /tmp && git clone https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${archiveRepo} ${candidateRepo} && cd ${candidateRepo} && git subtree add --prefix=${templateRepo}/${candidateRepo} https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} master && git push origin master && cd /tmp && rm -rf ${candidateRepo}`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`exec error: ${err}`);
+          reject(err);
+        }
+        resolve();
+      });
+    });
+  }
+
+  // Step 3 - Grant the user collaborator access to the new repo
+  function deleteCandidateRepo() {
+    console.log('deleteCandidateRepo called');
+    console.log(`Will be deleting owner ${org}, repo ${candidateRepo}`);
+    return Promise.resolve();
+    // return github.repos.delete({
+    //   owner: org,
+    //   repo: candidateRepo
+    // })
+    // .then(()=> {console.log('Delete candidate repo success')})
+    // .catch((err)=> {console.log('Delete candidate repo error ', err);});
+  }
+
+  return copyCandidateRepoToArchiveRepo()
+  .then(deleteCandidateRepo)
+  .then(() => {
+    console.log('archive repo completed successfully');
+    return `https://github.com/${org}/${candidateRepo}`;
+  })
+  .catch((err) => {
+    console.log('Caught error in archive repo ', err);
+  });
+}
+
 function removeCollaboratorAccess(params) {
   return new Promise((resolve, reject) => {
     console.log('Calling remove collaborator. Params = ', params);

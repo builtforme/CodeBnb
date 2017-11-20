@@ -49,6 +49,8 @@ You need to set some environment variables in your AWS Lambda function:
 
 `REVOCATION_NOTIFICATION_RECEPIENT` - Email address to receive notifications when a candidate's access is revoked.
 
+`ARCHIVE_REPO` - The name of a repo in the same `GITHUB_ORG` which will be used to store archives of projects, allowing candidate-specific repos to be deleted after a period of time. Each candidate repo will be copied into a folder named `$ARCHIVE_REPO/$TEMPLATE_REPO/$TEMPLATE_REPO-$CANDIDATE_NAME` within the ARCHIVE REPO.
+
 If running locally, you can simply store these keys in a `.env` file and they will automatically be loaded into your environment.
 
 ### AWS API Gateway Setup
@@ -76,6 +78,7 @@ Created | This column records the date each row was inserted by CodeBnb.
 GitHub | The candidate's GitHub account username, which is the GitHub account which will be granted `push` rights to the repository.
 assigned | CodeBnb will record a timestamp of when access is granted to the repo. (Leave this column blank when adding new candidates).
 revoked | CodeBnb will record a timestamp of when access is revoked from the repo. (Leave this column blank when adding new candidates).
+revoked | CodeBnb will record a timestamp of when the repo is archived. (Leave this column blank when adding new candidates). Archiving a repo consists of copying it as a subtree within a master project archive repo.
 
 Note: Column names are case- and whitespace-insensitive. For example, "Candidate Name" and "candidatename" are both acceptable.
 

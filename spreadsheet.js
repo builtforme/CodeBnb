@@ -197,7 +197,61 @@ function scanForExpiredWindows() {
   });
 }
 
+function archiveRepos() {
+  return getWorksheet()
+  .then((sheet) => {
+    return new Promise((resolve, reject) => {
+      // Get rows from the sheet. We order by assigned and reverse the returned rows
+      // so that we get candidates who have not been archived yet.
+      sheet.getRows({
+        offset: 0,
+        limit: 50,
+        orderby: 'archived',
+        reverse: true
+      }, (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+
+        rowsToArchive = _.filter(rows, (row) => {
+          // Allow 14 days before archiving a repo
+          return !row.archived && row.revoked && moment().isAfter(moment(row.revoked).add(14, 'days'));
+        });
+
+        console.log(`Found ${rowsToArchive.length} repos to archive.`);
+
+        const archives = [];
+
+        _.each(rowsToArchive, (row) => {
+          row.archived = moment().format();
+          row.save();
+          archives.push(new Promise((resolve, reject) => {
+            // Google has ugly cruft.
+            delete row._xml;
+
+            console.log('Archiving row ', row);
+
+            return repos.archive({
+              candidateGitHubUsername: row.github,
+              templateRepo: row.assignment
+            })
+            .then(email.sendArchiveNotification(row.candidatename))
+            .then(resolve)
+            .catch(reject);
+          }));
+        });
+
+        console.log('Waiting for ' + archives.length + ' archive operations...');
+        Promise.all(archives)
+        .then(resolve)
+        .catch(reject);
+      });
+    });
+  });
+}
+
 module.exports = {
+  archiveRepos,
   startAssignment,
   addCandidate,
   scanForExpiredWindows,
