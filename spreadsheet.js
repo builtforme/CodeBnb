@@ -231,7 +231,7 @@ function archiveRepos() {
 
             console.log('Archiving row ', row);
 
-            return repos.archive({
+            return repos.archiveRepo({
               candidateGitHubUsername: row.github,
               templateRepo: row.assignment
             })

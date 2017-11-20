@@ -133,6 +133,7 @@ function removeCollaboratorAccess(params) {
 }
 
 module.exports = {
+  archiveRepo,
   initializeCandidate,
   removeCollaboratorAccess
 }
