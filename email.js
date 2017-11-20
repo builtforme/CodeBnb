@@ -32,7 +32,7 @@ exports.sendRevocationNotification = (candidateName, emailService = ses) => {
   });
 };
 
-exports.sendRevocationNotification = (candidateName, emailService = ses) => {
+exports.sendArchiveNotification = (candidateName, emailService = ses) => {
   return new Promise((resolve, reject) => {
     emailService.sendEmail({
       Destination: {
