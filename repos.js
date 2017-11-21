@@ -77,11 +77,12 @@ function archiveRepo(params) {
   const archiveRepo = process.env.ARCHIVE_REPO;
   const candidateRepo = `${templateRepo}-${candidateGitHubUsername}`;
   const candidateName = params.candidateName;
+  const randomSuffix = Math.floor(Math.random() * 100000); // To prevent conflicts with existing directory names
 
   function copyCandidateRepoToArchiveRepo() {
     return new Promise((resolve, reject) => {
       console.log('cloneCandidateRepo called');
-      exec(`cd /tmp && git clone https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${archiveRepo} ${candidateRepo} && cd ${candidateRepo} && git subtree add --prefix=${templateRepo}/${candidateRepo} https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} master && git push origin master && cd /tmp && rm -rf ${candidateRepo}`, (err, stdout, stderr) => {
+      exec(`cd /tmp && export HOME=/tmp && git config --global user.email "CodeBnb@{$org}" && git config --global user.name "CodeBnb" && git clone https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${archiveRepo} ${candidateRepo}-${randomSuffix} && cd ${candidateRepo}-${randomSuffix} && git subtree add --prefix=${templateRepo}/${candidateRepo} https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} master && git push origin master && cd /tmp && rm -rf ${candidateRepo}-${randomSuffix}`, (err, stdout, stderr) => {
         if (err) {
           console.error(`exec error: ${err}`);
           reject(err);
