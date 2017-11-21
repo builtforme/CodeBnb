@@ -33,7 +33,7 @@ You need to set some environment variables in your AWS Lambda function:
 
 `GITHUB_ORG` - The name of the organization under which software assignments will be created (and in which the template repository lives).
 
-`GITHUB_USER_TOKEN` - An access token from https://github.com/settings/tokens retrieved by an account with sufficient permissions to the GitHub organization containing the template repo.
+`GITHUB_USER_TOKEN` - An access token from https://github.com/settings/tokens retrieved by an account with sufficient permissions to the GitHub organization containing the template repo. The required permissions are *repo* ("Full control of private repositories") consisting of `repo:status`, `repo_deployment`, `public_repo`, and `repo:invite`, and *delete_repo* (to allow CodeBnb to archive the project repositories to keep the org relatively clean).
 
 `SPREADSHEET_KEY` - The spreadsheet key from the Google Docs URL. See https://www.npmjs.com/package/google-spreadsheet
 

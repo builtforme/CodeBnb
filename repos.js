@@ -97,13 +97,12 @@ function archiveRepo(params) {
   function deleteCandidateRepo() {
     console.log('deleteCandidateRepo called');
     console.log(`Will be deleting owner ${org}, repo ${candidateRepo}`);
-    return Promise.resolve();
-    // return github.repos.delete({
-    //   owner: org,
-    //   repo: candidateRepo
-    // })
-    // .then(()=> {console.log('Delete candidate repo success')})
-    // .catch((err)=> {console.log('Delete candidate repo error ', err);});
+    return github.repos.delete({
+      owner: org,
+      repo: candidateRepo
+    })
+    .then(()=> {console.log('Delete candidate repo success')})
+    .catch((err)=> {console.log('Delete candidate repo error ', err);});
   }
 
   return copyCandidateRepoToArchiveRepo()
