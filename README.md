@@ -88,3 +88,14 @@ In order to run the unit test suite, run the command from within the root direct
 ```
 npm test
 ```
+
+### Troubleshooting
+#### Archive
+If you see the error
+```
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Working tree has modifications.  Cannot add.
+```
+that likely means there are no commits in your archive repo. Make some initial commit then try again.
