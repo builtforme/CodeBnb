@@ -242,7 +242,7 @@ function archiveRepos() {
         });
 
         console.log('Waiting for ' + archives.length + ' archive operations...');
-        Promise.all(archives)
+        Promise.each(archives)
         .then(resolve)
         .catch(reject);
       });
