@@ -1,5 +1,6 @@
 const gs = require('google-spreadsheet');
 const _ = require('underscore');
+const async = require('async');
 _.str = require('underscore.string');
 const moment = require('moment');
 const repos = require('./repos');
@@ -220,31 +221,36 @@ function archiveRepos() {
 
         console.log(`Found ${rowsToArchive.length} repos to archive.`);
 
-        const archives = [];
-
-        _.each(rowsToArchive, (row) => {
+        async.eachSeries(rowsToArchive, (row, callback) => {
           row.archived = moment().format();
           row.save();
-          archives.push(new Promise((resolve, reject) => {
-            // Google has ugly cruft.
-            delete row._xml;
+          // Google has ugly cruft.
+          delete row._xml;
 
-            console.log('Archiving row ', row);
+          console.log(`Archiving ${row.candidatename}'s project...'`);
 
-            return repos.archiveRepo({
-              candidateGitHubUsername: row.github,
-              templateRepo: row.assignment
-            })
-            .then(email.sendArchiveNotification(row.candidatename))
-            .then(resolve)
-            .catch(reject);
-          }));
+          repos.archiveRepo({
+            candidateGitHubUsername: row.github,
+            templateRepo: row.assignment,
+            candidateName: row.candidatename
+          })
+          .then(email.sendArchiveNotification(row.candidatename))
+          .then(() => {
+            console.log(`Success archiving ${row.candidatename}'s project.'`);
+            callback();
+          })
+          .catch((err) => {
+            // Mark the row as not archived.
+            row.archived = undefined;
+            row.save();
+            callback(err);
+          });
+        }, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
         });
-
-        console.log('Waiting for ' + archives.length + ' archive operations...');
-        Promise.each(archives)
-        .then(resolve)
-        .catch(reject);
       });
     });
   });

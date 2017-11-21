@@ -81,12 +81,13 @@ function archiveRepo(params) {
 
   function copyCandidateRepoToArchiveRepo() {
     return new Promise((resolve, reject) => {
-      console.log('cloneCandidateRepo called');
-      exec(`cd /tmp && export HOME=/tmp && git config --global user.email "CodeBnb@{$org}" && git config --global user.name "CodeBnb" && git clone https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${archiveRepo} ${candidateRepo}-${randomSuffix} && cd ${candidateRepo}-${randomSuffix} && git subtree add --prefix=${templateRepo}/${candidateRepo} https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} master && git push origin master && cd /tmp && rm -rf ${candidateRepo}-${randomSuffix}`, (err, stdout, stderr) => {
+      console.log('copyCandidateRepoToArchiveRepo called. Proceeding to do some git magic...');
+      exec(`cd /tmp && export HOME=/tmp && git config --global user.email "CodeBnb@{$org}" && git config --global user.name "CodeBnb" && git clone https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${archiveRepo} ${candidateRepo}-${randomSuffix} && cd ${candidateRepo}-${randomSuffix} && git fetch && git pull && git subtree add --prefix=${templateRepo}/${candidateRepo} https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} master && git push origin master && cd /tmp && rm -rf ${candidateRepo}-${randomSuffix}`, (err, stdout, stderr) => {
         if (err) {
           console.error(`exec error: ${err}`);
           reject(err);
         }
+        console.log('Fancy git command successful.')
         resolve();
       });
     });
