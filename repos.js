@@ -71,6 +71,52 @@ function initializeCandidate(params) {
   });
 }
 
+function archiveRepo(params) {
+  const templateRepo = params.templateRepo;
+  const candidateGitHubUsername = params.candidateGitHubUsername;
+  const archiveRepo = process.env.ARCHIVE_REPO;
+  const candidateRepo = `${templateRepo}-${candidateGitHubUsername}`;
+  const candidateName = params.candidateName;
+  const randomSuffix = Math.floor(Math.random() * 100000); // To prevent conflicts with existing directory names
+
+  function copyCandidateRepoToArchiveRepo() {
+    return new Promise((resolve, reject) => {
+      console.log('copyCandidateRepoToArchiveRepo called. Proceeding to do some git magic...');
+      exec(`cd /tmp && export HOME=/tmp && git config --global user.email "CodeBnb@{$org}" && git config --global user.name "CodeBnb" && git clone https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${archiveRepo} ${candidateRepo}-${randomSuffix} && cd ${candidateRepo}-${randomSuffix} && git fetch && git pull && git subtree add --prefix=${templateRepo}/${candidateRepo} https://${process.env.GITHUB_USER_TOKEN}@github.com/${org}/${candidateRepo} master && git push origin master && cd /tmp && rm -rf ${candidateRepo}-${randomSuffix}`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`exec error: ${err}`);
+          reject(err);
+        }
+        console.log('Fancy git command successful.')
+        resolve();
+      });
+    });
+  }
+
+  // Step 3 - Grant the user collaborator access to the new repo
+  function deleteCandidateRepo() {
+    console.log('deleteCandidateRepo called');
+    console.log(`Will be deleting owner ${org}, repo ${candidateRepo}`);
+    return github.repos.delete({
+      owner: org,
+      repo: candidateRepo
+    })
+    .then(()=> {console.log('Delete candidate repo success')})
+    .catch((err)=> {console.log('Delete candidate repo error ', err);});
+  }
+
+  return copyCandidateRepoToArchiveRepo()
+  .then(deleteCandidateRepo)
+  .then(() => {
+    console.log('archive repo completed successfully');
+    return `https://github.com/${org}/${candidateRepo}`;
+  })
+  .catch((err) => {
+    console.log('Caught error in archive repo ', err);
+    return Promise.reject(err);
+  });
+}
+
 function removeCollaboratorAccess(params) {
   return new Promise((resolve, reject) => {
     console.log('Calling remove collaborator. Params = ', params);
@@ -89,6 +135,7 @@ function removeCollaboratorAccess(params) {
 }
 
 module.exports = {
+  archiveRepo,
   initializeCandidate,
   removeCollaboratorAccess
 }

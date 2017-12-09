@@ -106,6 +106,20 @@ function run(event, context, callback) {
         });
       })
       .catch(callback);
+    } else if (event.action === 'archiveRepos'){
+      console.log('installing git binary...');
+      require('lambda-git')().then(() => {
+        console.log('Scanning for repos to archive...');
+        spreadsheet.archiveRepos()
+        .then(() => {
+          console.log('scan for repos to archive successful.');
+          callback(null);
+        })
+        .catch((err) => {
+          console.log('Scan for repos to archive failed. Err = ', err);
+          callback(err);
+        });
+      });
     } else {
       console.log('Completely unexpected event: ', event);
       callback(null, {

@@ -1,5 +1,6 @@
 const gs = require('google-spreadsheet');
 const _ = require('underscore');
+const async = require('async');
 _.str = require('underscore.string');
 const moment = require('moment');
 const repos = require('./repos');
@@ -197,7 +198,66 @@ function scanForExpiredWindows() {
   });
 }
 
+function archiveRepos() {
+  return getWorksheet()
+  .then((sheet) => {
+    return new Promise((resolve, reject) => {
+      // Get rows from the sheet. We order by assigned and reverse the returned rows
+      // so that we get candidates who have not been archived yet.
+      sheet.getRows({
+        offset: 0,
+        limit: 50,
+        orderby: 'archived',
+        reverse: true
+      }, (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+
+        rowsToArchive = _.filter(rows, (row) => {
+          // Allow 14 days before archiving a repo
+          return !row.archived && row.revoked && moment().isAfter(moment(row.revoked).add(14, 'days'));
+        });
+
+        console.log(`Found ${rowsToArchive.length} repos to archive.`);
+
+        async.eachSeries(rowsToArchive, (row, callback) => {
+          row.archived = moment().format();
+          row.save();
+          // Google has ugly cruft.
+          delete row._xml;
+
+          console.log(`Archiving ${row.candidatename}'s project...'`);
+
+          repos.archiveRepo({
+            candidateGitHubUsername: row.github,
+            templateRepo: row.assignment,
+            candidateName: row.candidatename
+          })
+          .then(email.sendArchiveNotification(row.candidatename))
+          .then(() => {
+            console.log(`Success archiving ${row.candidatename}'s project.'`);
+            callback();
+          })
+          .catch((err) => {
+            // Mark the row as not archived.
+            row.archived = undefined;
+            row.save();
+            callback(err);
+          });
+        }, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve();
+        });
+      });
+    });
+  });
+}
+
 module.exports = {
+  archiveRepos,
   startAssignment,
   addCandidate,
   scanForExpiredWindows,

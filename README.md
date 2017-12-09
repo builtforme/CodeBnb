@@ -33,7 +33,7 @@ You need to set some environment variables in your AWS Lambda function:
 
 `GITHUB_ORG` - The name of the organization under which software assignments will be created (and in which the template repository lives).
 
-`GITHUB_USER_TOKEN` - An access token from https://github.com/settings/tokens retrieved by an account with sufficient permissions to the GitHub organization containing the template repo.
+`GITHUB_USER_TOKEN` - An access token from https://github.com/settings/tokens retrieved by an account with sufficient permissions to the GitHub organization containing the template repo. The required permissions are *repo* ("Full control of private repositories") consisting of `repo:status`, `repo_deployment`, `public_repo`, and `repo:invite`, and *delete_repo* (to allow CodeBnb to archive the project repositories to keep the org relatively clean).
 
 `SPREADSHEET_KEY` - The spreadsheet key from the Google Docs URL. See https://www.npmjs.com/package/google-spreadsheet
 
@@ -48,6 +48,8 @@ You need to set some environment variables in your AWS Lambda function:
 `EMAIL_FROM` - The email address used as the sender for email-based notifications.
 
 `REVOCATION_NOTIFICATION_RECEPIENT` - Email address to receive notifications when a candidate's access is revoked.
+
+`ARCHIVE_REPO` - The name of a repo in the same `GITHUB_ORG` which will be used to store archives of projects, allowing candidate-specific repos to be deleted after a period of time. Each candidate repo will be copied into a folder named `$ARCHIVE_REPO/$TEMPLATE_REPO/$TEMPLATE_REPO-$CANDIDATE_NAME` within the ARCHIVE REPO.
 
 If running locally, you can simply store these keys in a `.env` file and they will automatically be loaded into your environment.
 
@@ -76,6 +78,7 @@ Created | This column records the date each row was inserted by CodeBnb.
 GitHub | The candidate's GitHub account username, which is the GitHub account which will be granted `push` rights to the repository.
 assigned | CodeBnb will record a timestamp of when access is granted to the repo. (Leave this column blank when adding new candidates).
 revoked | CodeBnb will record a timestamp of when access is revoked from the repo. (Leave this column blank when adding new candidates).
+revoked | CodeBnb will record a timestamp of when the repo is archived. (Leave this column blank when adding new candidates). Archiving a repo consists of copying it as a subtree within a master project archive repo.
 
 Note: Column names are case- and whitespace-insensitive. For example, "Candidate Name" and "candidatename" are both acceptable.
 
@@ -85,3 +88,14 @@ In order to run the unit test suite, run the command from within the root direct
 ```
 npm test
 ```
+
+### Troubleshooting
+#### Archive
+If you see the error
+```
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Working tree has modifications.  Cannot add.
+```
+that likely means there are no commits in your archive repo. Make some initial commit then try again.
