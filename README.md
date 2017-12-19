@@ -53,6 +53,9 @@ You need to set some environment variables in your AWS Lambda function:
 
 If running locally, you can simply store these keys in a `.env` file and they will automatically be loaded into your environment.
 
+### GitHub Repos
+Assign the "project" [topic](https://help.github.com/articles/about-topics/) to any repo you wish to use as a template repo. When generating a candidate URL, CodeBnb will allow you to select from any _project_ topic repos within your GitHub org.
+
 ### AWS API Gateway Setup
 Configure a new API Gateway with two resources:
 
@@ -78,7 +81,7 @@ Created | This column records the date each row was inserted by CodeBnb.
 GitHub | The candidate's GitHub account username, which is the GitHub account which will be granted `push` rights to the repository.
 assigned | CodeBnb will record a timestamp of when access is granted to the repo. (Leave this column blank when adding new candidates).
 revoked | CodeBnb will record a timestamp of when access is revoked from the repo. (Leave this column blank when adding new candidates).
-revoked | CodeBnb will record a timestamp of when the repo is archived. (Leave this column blank when adding new candidates). Archiving a repo consists of copying it as a subtree within a master project archive repo.
+archived | CodeBnb will record a timestamp of when the repo is archived. (Leave this column blank when adding new candidates). Archiving a repo consists of copying it as a subtree within a master project archive repo.
 
 Note: Column names are case- and whitespace-insensitive. For example, "Candidate Name" and "candidatename" are both acceptable.
 
