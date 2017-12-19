@@ -134,8 +134,29 @@ function removeCollaboratorAccess(params) {
   });
 }
 
+function getProjectRepos() {
+  return new Promise((resolve, reject) => {
+    github.search.repos({
+      q: `user:${process.env.GITHUB_ORG} topic:project`,
+      sort: 'updated',
+      order: 'desc'
+    }, (err, result) => {
+      if (err) {
+        return reject(err);
+      }
+      if (result.data.total_count === 0) {
+        return reject(new Error('No project repositories found.'));
+      }
+      resolve(result.data.items.map((item) => {
+        return item.name;
+      }));
+    })
+  });
+}
+
 module.exports = {
   archiveRepo,
   initializeCandidate,
-  removeCollaboratorAccess
+  removeCollaboratorAccess,
+  getProjectRepos,
 }

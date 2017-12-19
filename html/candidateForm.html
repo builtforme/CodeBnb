@@ -14,7 +14,11 @@
     Fill out this form to generate a URL to send to the candidate which will allow them to start their assignment.<BR><BR>
       <table>
         <tr><td>Candidate's Full Name:</td><td><input type="text" id="candidateName"></td></tr>
-        <tr><td>Assignment:</td><td><input type="text" id="assignment"></td></tr>
+        <tr><td>Assignment:</td><td><select id="assignment">
+          {{#each repos}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select></td></tr>
         <tr><td>Duration (hours):</td><td><input type="text" id="duration"></td></tr>
         <tr><td>&nbsp;</td><td><button onClick="javascript:handleSubmit();">Get Assignment URL</button></td></tr>
       </table>
