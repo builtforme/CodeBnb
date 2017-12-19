@@ -1,10 +1,14 @@
 // Needs to be first to load in environment variables
 // from .env file
 require('dotenv').config();
-const spreadsheet = require('./spreadsheet');
+
 const fs = require('fs');
 const str = require('underscore.string');
+const Handlebars = require('handlebars');
+
 const email = require('./email');
+const spreadsheet = require('./spreadsheet');
+const repos = require('./repos');
 
 function run(event, context, callback) {
   console.log('Event = ', JSON.stringify(event));
@@ -66,11 +70,25 @@ function run(event, context, callback) {
         });
       } else {
         // Return the HTML to collect the required parameters
-        callback(null, {
-          'isBase64Encoded': false,
-          'statusCode': 200,
-          'headers': { 'Content-Type': 'text/html' },
-          'body': fs.readFileSync('html/candidateForm.html', {encoding: 'utf8'})
+        repos.getProjectRepos()
+        .then((templateRepos) => {
+          const candidateFormTemplateSrc = fs.readFileSync('html/candidateForm.html', {encoding: 'utf8'});
+          const candidateFormTemplate = Handlebars.compile(candidateFormTemplateSrc);
+
+          callback(null, {
+            'isBase64Encoded': false,
+            'statusCode': 200,
+            'headers': { 'Content-Type': 'text/html' },
+            'body': candidateFormTemplate({repos: templateRepos})
+          });
+        })
+        .catch((err) => {
+          callback(null, {
+            'isBase64Encoded': false,
+            'statusCode': 200,
+            'headers': { 'Content-Type': 'text/html' },
+            'body': err
+          });
         });
       }
     } else if (event.action === 'scanForExpiredWindows'){
