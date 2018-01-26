@@ -8,6 +8,7 @@ const Promise = require('bluebird');
 const email = require('./email');
 
 const INVITATION_VALID_FOR_DAYS = 30;
+const LIMIT = 500;
 
 function getWorksheet() {
   return new Promise((resolve, reject) => {
@@ -66,9 +67,9 @@ function startAssignment(authcode, githubUsername) {
       // so that we get candidates who have not been assigned yet.
       sheet.getRows({
         offset: 0,
-        limit: 50,
+        limit: LIMIT,
         orderby: 'assigned',
-        reverse: true
+        reverse: false
       }, (err, rows) => {
         if (err) {
           return reject(err);
@@ -118,9 +119,9 @@ function scanForExpiringInvitations() {
       // so that we get candidates who have not been assigned yet.
       sheet.getRows({
         offset: 0,
-        limit: 50,
+        limit: LIMIT,
         orderby: 'assigned',
-        reverse: true
+        reverse: false
       }, (err, rows) => {
         if (err) {
           return reject(err);
@@ -132,7 +133,7 @@ function scanForExpiringInvitations() {
           return !row.revoked && moment().isSame(moment(row.created).add(INVITATION_VALID_FOR_DAYS, 'days'), 'day');
         });
 
-        console.log(`Found ${expiringInvitations.length} invitations expiring in the next day.`);
+        console.log(`Scanned ${rows.length} rows and found ${expiringInvitations.length} invitations expiring in the next day.`);
 
         if (expiringInvitations.length > 0) {
           email.sendInvitationExpiringNotification(_.str.join(', ', _.pluck(expiringInvitations, 'candidatename')))
@@ -154,9 +155,9 @@ function scanForExpiredWindows() {
       // so that we get candidates who have not been assigned yet.
       sheet.getRows({
         offset: 0,
-        limit: 50,
+        limit: LIMIT,
         orderby: 'assigned',
-        reverse: true
+        reverse: false
       }, (err, rows) => {
         if (err) {
           return reject(err);
@@ -206,9 +207,9 @@ function archiveRepos() {
       // so that we get candidates who have not been archived yet.
       sheet.getRows({
         offset: 0,
-        limit: 50,
+        limit: LIMIT,
         orderby: 'archived',
-        reverse: true
+        reverse: false
       }, (err, rows) => {
         if (err) {
           return reject(err);
