@@ -130,10 +130,10 @@ function scanForExpiringInvitations() {
         expiringInvitations = _.filter(rows, (row) => {
           console.log(`Assigned: ${row.assigned}`);
           console.log(`now: ${moment()}`);
-          return !row.revoked && moment().isSame(moment(row.created).add(INVITATION_VALID_FOR_DAYS, 'days'), 'day');
+          return !row.revoked && moment().isSame(moment(row.created).add(INVITATION_VALID_FOR_DAYS + 1, 'days'), 'day');
         });
 
-        console.log(`Scanned ${rows.length} rows and found ${expiringInvitations.length} invitations expiring in the next day.`);
+        console.log(`Scanned ${rows.length} rows and found ${expiringInvitations.length} invitations expired.`);
 
         if (expiringInvitations.length > 0) {
           email.sendInvitationExpiringNotification(_.str.join(', ', _.pluck(expiringInvitations, 'candidatename')))
