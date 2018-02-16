@@ -71,7 +71,7 @@ exports.sendInvitationExpiringNotification = (candidateNames, emailService = ses
           }
         },
         Subject: {
-          Data: `Project Invitations Expiring Within 24 Hours`
+          Data: `Expired Project Invitations`
         }
       },
       Source: process.env.EMAIL_FROM
