@@ -217,7 +217,7 @@ function archiveRepos() {
 
         rowsToArchive = _.filter(rows, (row) => {
           // Allow 14 days before archiving a repo
-          return !row.archived && row.revoked && moment().isAfter(moment(row.revoked).add(14, 'days'));
+          return !row.archived && row.revoked && moment().isAfter(moment(row.revoked).add(30, 'days'));
         });
 
         console.log(`Found ${rowsToArchive.length} repos to archive.`);
