@@ -1,5 +1,5 @@
 {
-  "version": "2.3.3",
+  "version": "2.3.4",
   "scripts": {
     "test": "jest --coverage",
     "zip": "zip -r lambda.zip *.js package.json node_modules html"
@@ -9,7 +9,7 @@
     "aws-sdk": "^2.119.0",
     "bluebird": "^3.5.0",
     "dotenv": "^4.0.0",
-    "github": "^11.0.0",
+    "github": "^12.0.0",
     "google-spreadsheet": "^2.0.4",
     "handlebars": "^4.0.11",
     "lambda-git": "^0.1.1",
