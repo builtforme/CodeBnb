@@ -64,6 +64,9 @@ Configure a new API Gateway with two resources:
 
 Add a `GET` method on each. Configure each method as a `LAMBDA_PROXY` to your AWS Lambda function.
 
+3. Add a `POST` method on `/assignment`, also configured as a Lambda Proxy.
+4. Click Actions > Deploy API to deploy the API. Create a new stage to deploy to (this stage name will be visible in your URL).
+
 ### Google Sheets Setup
 Follow instructions at https://www.npmjs.com/package/google-spreadsheet#service-account-recommended-method. You'll need to go to https://console.cloud.google.com and create a project, then enable the Sheets API. Then under Credentials > Create credentials > Service account key. You'll be given a JSON file to download and among a bunch of other stuff it will contain your client email and private key.
 
