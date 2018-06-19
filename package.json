@@ -1,8 +1,12 @@
 {
   "version": "2.3.4",
+  "config": {
+    "s3bucket": "your-s3-bucket"
+  },
   "scripts": {
     "test": "jest --coverage",
-    "zip": "zip -r lambda.zip *.js package.json node_modules html"
+    "zip": "zip -r lambda.zip *.js package.json node_modules html",
+    "deploy": "npm version patch && $npm_package_scripts_zip && aws s3 cp lambda.zip s3://$npm_package_config_s3bucket/v$npm_package_version/lambda.zip && terraform apply -var=\"app_version=$npm_package_version\" -var=\"s3bucket=$npm_package_config_s3bucket\""
   },
   "dependencies": {
     "async": "^2.6.0",

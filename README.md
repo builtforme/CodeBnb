@@ -20,6 +20,9 @@ At the end of the assignment window, simply peruse the candidate's repo and judg
 All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don't have to edit the spreadsheet at all.
 
 ## Setup
+CodeBnb uses [TerraForm](http://terraform.io) to help manage infrastructure. In the `terraform/` directory:
+
+1. Run `terraform init`. This will install the AWS provider.
 
 ### AWS Lambda
 1. Run `npm run zip` to generate the file `lambda.zip`.
