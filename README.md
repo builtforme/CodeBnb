@@ -20,9 +20,17 @@ At the end of the assignment window, simply peruse the candidate's repo and judg
 All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don't have to edit the spreadsheet at all.
 
 ## Setup
-CodeBnb uses [TerraForm](http://terraform.io) to help manage infrastructure. In the `terraform/` directory:
+CodeBnb uses [TerraForm](http://terraform.io) to help manage infrastructure.
 
-1. Run `terraform init`. This will install the AWS provider.
+1. Pick an S3 bucket to use. Set this name in `package.json` under `config` > `s3bucket`.
+1. Create the S3 bucket you want to use to as the source for the AWS Lambda function.
+  1. `$ npm run createS3bucket`
+1. Change to the terraform directory
+  1. `$ cd terraform`
+1. Install the AWS TerraForm provider.
+  1. `$ terraform init`
+1. Deploy everything using TerraForm. `package.json` contains a convenience script which (a) bundles everything into a zip file, (b) uploads it to a version folder in the S3 bucket, (c) sets the s3 bucket and version variables in TerraForm, and (d) runs `terraform apply` for you.
+  1. `$ npm run deploy`
 
 ### AWS Lambda
 1. Run `npm run zip` to generate the file `lambda.zip`.
