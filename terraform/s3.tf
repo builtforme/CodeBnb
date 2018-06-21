@@ -89,7 +89,7 @@ resource "aws_api_gateway_method" "add_candidate" {
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_resource" "get_assignment" {
+resource "aws_api_gateway_resource" "assignment" {
   rest_api_id = "${aws_api_gateway_rest_api.code_bnb.id}"
   parent_id   = "${aws_api_gateway_rest_api.code_bnb.root_resource_id}"
   path_part   = "assignment"
@@ -97,20 +97,14 @@ resource "aws_api_gateway_resource" "get_assignment" {
 
 resource "aws_api_gateway_method" "get_assignment" {
   rest_api_id   = "${aws_api_gateway_rest_api.code_bnb.id}"
-  resource_id   = "${aws_api_gateway_resource.get_assignment.id}"
+  resource_id   = "${aws_api_gateway_resource.assignment.id}"
   http_method   = "GET"
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_resource" "post_assignment" {
-  rest_api_id = "${aws_api_gateway_rest_api.code_bnb.id}"
-  parent_id   = "${aws_api_gateway_rest_api.code_bnb.root_resource_id}"
-  path_part   = "assignment"
-}
-
 resource "aws_api_gateway_method" "post_assignment" {
   rest_api_id   = "${aws_api_gateway_rest_api.code_bnb.id}"
-  resource_id   = "${aws_api_gateway_resource.post_assignment.id}"
+  resource_id   = "${aws_api_gateway_resource.assignment.id}"
   http_method   = "POST"
   authorization = "NONE"
 }
@@ -179,6 +173,7 @@ resource "aws_api_gateway_integration" "add_candidate" {
 }
 
 
+# TODO: This one appears to make a GET resource under / in the API Gateway and we should remove it
 resource "aws_api_gateway_method" "add_candidate_root" {
   rest_api_id   = "${aws_api_gateway_rest_api.code_bnb.id}"
   resource_id   = "${aws_api_gateway_rest_api.code_bnb.root_resource_id}"
@@ -186,6 +181,7 @@ resource "aws_api_gateway_method" "add_candidate_root" {
   authorization = "NONE"
 }
 
+# TODO: This one appears to make a POST resource under / in the API Gateway and we should remove it
 resource "aws_api_gateway_method" "post_assignment_root" {
   rest_api_id   = "${aws_api_gateway_rest_api.code_bnb.id}"
   resource_id   = "${aws_api_gateway_rest_api.code_bnb.root_resource_id}"
@@ -288,7 +284,7 @@ resource "aws_api_gateway_method" "post_assignment_root" {
 #   uri                     = "${aws_lambda_function.productLanding.invoke_arn}"
 # }
 
-resource "aws_api_gateway_deployment" "productLandingApiGatewayDeployment" {
+resource "aws_api_gateway_deployment" "codeBnbApiGatewayDeployment" {
   depends_on = [
     "aws_api_gateway_integration.get_assignment",
     "aws_api_gateway_integration.add_candidate",
@@ -306,35 +302,60 @@ resource "aws_lambda_permission" "apigw_lambda_add_candidate_permission" {
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.add_candidate.http_method}${aws_api_gateway_resource.add_candidate.path}"
+  # source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.add_candidate.http_method}${aws_api_gateway_resource.add_candidate.path}"
+  source_arn = "${aws_api_gateway_rest_api.code_bnb.execution_arn}/*/*/*"
 }
+#
+# resource "aws_lambda_permission" "apigw_lambda_get_assignment_permission" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = "${aws_lambda_function.code_bnb.function_name}"
+#   principal     = "apigateway.amazonaws.com"
+#
+#   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+#   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.get_assignment.http_method}${aws_api_gateway_resource.assignment.path}"
+# }
+#
+# resource "aws_lambda_permission" "apigw_lambda_post_assignment_permission" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = "${aws_lambda_function.code_bnb.function_name}"
+#   principal     = "apigateway.amazonaws.com"
+#
+#   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+#   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.post_assignment.http_method}${aws_api_gateway_resource.assignment.path}"
+# }
 
-resource "aws_lambda_permission" "apigw_lambda_get_assignment_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.code_bnb.function_name}"
-  principal     = "apigateway.amazonaws.com"
-
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.get_assignment.http_method}${aws_api_gateway_resource.get_assignment.path}"
-}
-
-resource "aws_lambda_permission" "apigw_lambda_post_assignment_permission" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.code_bnb.function_name}"
-  principal     = "apigateway.amazonaws.com"
-
-  # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.post_assignment.http_method}${aws_api_gateway_resource.post_assignment.path}"
-}
+# These permissions resulted in the error
+# * aws_lambda_permission.apigw_lambda_add_candidate_permission: [WARN] Error adding new Lambda Permission for CodeBnb, retrying: ResourceConflictException: The statement id (AllowExecutionFromAPIGateway) provided already exists. Please provide a new statement id, or remove the existing statement.
+# 	status code: 409, request id: 36c6d143-7413-11e8-8de3-49eb77d241a4
+# * aws_lambda_permission.apigw_lambda_get_assignment_permission: 1 error(s) occurred:
+# resource "aws_lambda_permission" "apigw_lambda_permission" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = "${aws_lambda_function.code_bnb.function_name}"
+#   principal     = "apigateway.amazonaws.com"
+#
+#   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+#   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.get_assignment.http_method}${aws_api_gateway_resource.get_assignment.path}"
+# }
+#
+# resource "aws_lambda_permission" "apigw_lambda_post_assignment_permission" {
+#   statement_id  = "AllowExecutionFromAPIGateway"
+#   action        = "lambda:InvokeFunction"
+#   function_name = "${aws_lambda_function.code_bnb.function_name}"
+#   principal     = "apigateway.amazonaws.com"
+#
+#   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
+#   source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.post_assignment.http_method}${aws_api_gateway_resource.post_assignment.path}"
+# }
 
 resource "aws_api_gateway_account" "demo" {
   cloudwatch_role_arn = "${aws_iam_role.cloudwatch.arn}"
 }
 
 resource "aws_iam_role" "cloudwatch" {
-  name = "api_gateway_cloudwatch_global"
+  name = "api_gateway_cloudwatch_global_codebnb"
 
   assume_role_policy = <<EOF
 {
