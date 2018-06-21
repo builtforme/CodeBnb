@@ -28,10 +28,10 @@ resource "aws_lambda_function" "code_bnb" {
   s3_bucket = "${aws_s3_bucket.lambda.bucket}"
   s3_key    = "v${var.app_version}/lambda.zip"
 
-  # "index" is the filename within the zip file (index.js) and "run"
+  # "index" is the filename within the zip file (index.js) and "handler"
   # is the name of the property under which the handler function was
   # exported in that file.
-  handler = "index.run"
+  handler = "index.handler"
   runtime = "nodejs8.10"
 
   role = "${aws_iam_role.lambda_exec.arn}"
@@ -195,10 +195,11 @@ resource "aws_lambda_permission" "apigw_lambda_add_candidate_permission" {
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  # source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.add_candidate.http_method}${aws_api_gateway_resource.add_candidate.path}"
-  source_arn = "${aws_api_gateway_rest_api.code_bnb.execution_arn}/*/*/*"
+  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.add_candidate.http_method}${aws_api_gateway_resource.add_candidate.path}"
+  # source_arn = "${aws_api_gateway_rest_api.code_bnb.execution_arn}/*/*/*"
 }
 
+# TODO: Figure out what demo is
 resource "aws_api_gateway_account" "demo" {
   cloudwatch_role_arn = "${aws_iam_role.cloudwatch.arn}"
 }
