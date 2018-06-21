@@ -79,7 +79,7 @@ resource "aws_api_gateway_rest_api" "code_bnb" {
 resource "aws_api_gateway_resource" "add_candidate" {
   rest_api_id = "${aws_api_gateway_rest_api.code_bnb.id}"
   parent_id   = "${aws_api_gateway_rest_api.code_bnb.root_resource_id}"
-  path_part   = "addCandidate"
+  path_part   = "addcandidate"
 }
 
 resource "aws_api_gateway_method" "add_candidate" {
@@ -115,8 +115,13 @@ data "aws_acm_certificate" "acm_cert" {
 }
 
 resource "aws_api_gateway_domain_name" "api_gw_domain" {
-  domain_name = "${var.lambda_function_name}.${var.domain}"
+  domain_name = "${lower(var.lambda_function_name)}.${lower(var.domain)}"
   certificate_arn = "${data.aws_acm_certificate.acm_cert.arn}"
+}
+
+# Included for troubleshooting.
+output "aws_api_gateway_domain_name" {
+  value = "${lower(var.lambda_function_name)}.${lower(var.domain)}"
 }
 
 data "aws_route53_zone" "aws_zone" {
