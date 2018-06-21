@@ -200,7 +200,8 @@ resource "aws_api_gateway_deployment" "codeBnbApiGatewayDeployment" {
   depends_on = [
     "aws_api_gateway_integration.get_assignment",
     "aws_api_gateway_integration.add_candidate",
-    "aws_api_gateway_integration.post_assignment"
+    "aws_api_gateway_integration.post_assignment",
+    "aws_api_gateway_integration.lambda_root"
   ]
 
   rest_api_id = "${aws_api_gateway_rest_api.code_bnb.id}"
@@ -210,12 +211,12 @@ resource "aws_api_gateway_deployment" "codeBnbApiGatewayDeployment" {
 resource "aws_lambda_permission" "apigw_lambda_add_candidate_permission" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.code_bnb.function_name}"
+  function_name = "${aws_lambda_function.code_bnb.arn}"
   principal     = "apigateway.amazonaws.com"
 
   # More: http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-control-access-using-iam-policies-to-invoke-api.html
-  source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.add_candidate.http_method}${aws_api_gateway_resource.add_candidate.path}"
-  # source_arn = "${aws_api_gateway_rest_api.code_bnb.execution_arn}/*/*/*"
+  #source_arn = "arn:aws:execute-api:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${aws_api_gateway_rest_api.code_bnb.id}/*/${aws_api_gateway_method.add_candidate.http_method}${aws_api_gateway_resource.add_candidate.path}"
+  source_arn = "${aws_api_gateway_rest_api.code_bnb.execution_arn}/*/*"
 }
 
 # TODO: Figure out what demo is
