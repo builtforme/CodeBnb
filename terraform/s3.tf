@@ -138,11 +138,6 @@ resource "aws_api_gateway_domain_name" "api_gw_domain" {
   certificate_arn = "${data.aws_acm_certificate.acm_cert.arn}"
 }
 
-# Included for troubleshooting.
-output "aws_api_gateway_domain_name" {
-  value = "${lower(var.lambda_function_name)}.${lower(var.domain)}"
-}
-
 data "aws_route53_zone" "aws_zone" {
   name         = "${var.domain}."
 }
