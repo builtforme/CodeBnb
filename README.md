@@ -64,6 +64,12 @@ You need to set some environment variables in your AWS Lambda function:
 
 If running locally, you can simply store these keys in a `.env` file and they will automatically be loaded into your environment.
 
+### CloudWatch Events
+You need to configure three cloudwatch events to automate some portions of CodeBnb:
+1. `ScanForExpiredWindows` - schedule expression `rate(30 minutes)` - Input: Constant: `{"action": "scanForExpiredWindows"}`
+2. `ScanForExpiringInvitations` - schedule expression `cron(0 0 * * ? *)` - Input: Constant: `{"action": "scanForExpiringInvitations"}`
+3. `ScanForReposToArchive` - schedule expression `rate(1 day)` - Input: Constant: `{"action": "archiveRepos"}`
+
 ### GitHub Repos
 Assign the "project" [topic](https://help.github.com/articles/about-topics/) to any repo you wish to use as a template repo. When generating a candidate URL, CodeBnb will allow you to select from any _project_ topic repos within your GitHub org.
 
