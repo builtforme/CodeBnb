@@ -102,11 +102,30 @@ resource "aws_api_gateway_method" "get_assignment" {
   authorization = "NONE"
 }
 
+# This doesn't seem to do much, but it also seems to be required for the other non-root resources to work at all.
+# It comes from https://www.terraform.io/docs/providers/aws/guides/serverless-with-aws-lambda-and-api-gateway.html
 resource "aws_api_gateway_method" "post_assignment" {
   rest_api_id   = "${aws_api_gateway_rest_api.code_bnb.id}"
   resource_id   = "${aws_api_gateway_resource.assignment.id}"
   http_method   = "POST"
   authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "proxy_root" {
+  rest_api_id   = "${aws_api_gateway_rest_api.code_bnb.id}"
+  resource_id   = "${aws_api_gateway_rest_api.code_bnb.root_resource_id}"
+  http_method   = "ANY"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "lambda_root" {
+  rest_api_id = "${aws_api_gateway_rest_api.code_bnb.id}"
+  resource_id = "${aws_api_gateway_method.proxy_root.resource_id}"
+  http_method = "${aws_api_gateway_method.proxy_root.http_method}"
+
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = "${aws_lambda_function.code_bnb.invoke_arn}"
 }
 
 data "aws_acm_certificate" "acm_cert" {
