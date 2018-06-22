@@ -306,3 +306,33 @@ resource "aws_iam_role_policy" "cloudwatch" {
 }
 EOF
 }
+
+resource "aws_iam_role_policy" "codebnb-lambda-iam-role" {
+  name = "lambda-ses"
+  role = "${aws_iam_role.lambda_exec.id}"
+
+  policy = <<EOF
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Effect":"Allow",
+      "Action":[
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+      ],
+      "Resource":"*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
