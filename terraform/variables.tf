@@ -62,11 +62,6 @@ variable "google_private_key" {
   description = "IAM user private key. See _Google Sheets Setup_ in the README."
 }
 
-variable "aws_api_gateway_endpoint" {
-  type = "string"
-  description = "The endpoint of your AWS API Gateway. Something like `https://<junk>.execute-api.us-east-1.amazonaws.com/<stage>`. See _AWS API Gateway Setup_ below."
-}
-
 variable "add_candidate_authorization_code" {
   type = "string"
   description = "A randomly generated secret that needs to be provided in order to add a candidate to the list of permitted candidates."

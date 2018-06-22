@@ -43,7 +43,7 @@ resource "aws_lambda_function" "code_bnb" {
       SPREADSHEET_KEY = "${var.spreadsheet_key}"
       GOOGLE_CLIENT_EMAIL = "${var.google_client_email}"
       GOOGLE_PRIVATE_KEY = "${var.google_private_key}"
-      AWS_API_GATEWAY_ENDPOINT = "${var.aws_api_gateway_endpoint}"
+      AWS_API_GATEWAY_ENDPOINT = "${lower(var.lambda_function_name)}.${lower(var.domain)}"
       ADD_CANDIDATE_AUTHORIZATION_CODE = "${var.add_candidate_authorization_code}"
     }
   }
