@@ -19,7 +19,7 @@ At the end of the assignment window, simply peruse the candidate's repo and judg
 
 All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don't have to edit the spreadsheet at all.
 
-## Setup
+## Installation and Setup
 CodeBnb uses [TerraForm](http://terraform.io) to help manage infrastructure.
 
 1. Pick an S3 bucket to use. Set this name in `package.json` under `config` > `s3bucket`.
@@ -30,7 +30,9 @@ CodeBnb uses [TerraForm](http://terraform.io) to help manage infrastructure.
 1. Install the AWS TerraForm provider.
   1. `$ terraform init`
 1. Deploy everything using TerraForm. `package.json` contains a convenience script which (a) bundles everything into a zip file, (b) uploads it to a version folder in the S3 bucket, (c) sets the s3 bucket and version variables in TerraForm, and (d) runs `terraform apply` for you.
-  1. `$ npm run deploy`
+  1. `$ npm run deploy` and run the `terraform apply` command instructed. You can manually modify the AWS Lambda environment variables afterwards.
+
+## Manual Infrastructure Setup (not recommended)
 
 ### AWS Lambda
 1. Run `npm run zip` to generate the file `lambda.zip`.
@@ -122,3 +124,6 @@ Use '--' to separate paths from revisions, like this:
 Working tree has modifications.  Cannot add.
 ```
 that likely means there are no commits in your archive repo. Make some initial commit then try again.
+
+#### API Gateway Internal Server Error
+If accessing via a web browser you get an internal server error but when you use the AWS Console to test the API Gateway integration and it works, you may need to re-deploy the API using the AWS Console.
