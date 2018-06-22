@@ -37,6 +37,12 @@ variable "lambda_function_name" {
 }
 
 # Lambda Environment Variables
+variable "lambda_env_vars" {
+  type = "string"
+  default = "lambda_env_vars"
+  description = "All variables beyond this are just environment variables for the AWS Lamdba function and can easily be changed later. If you're not sure just make something up and fix it later. Press [Enter] to continue."
+}
+
 variable "github_org" {
   type = "string"
   description = "The name of the organization under which software assignments will be created (and in which the template repository lives)."
@@ -54,13 +60,13 @@ variable "spreadsheet_key" {
 
 variable "google_client_email" {
   type = "string"
-  description = "IAM user. See _Google Sheets Setup_ in the README."
+  description = "IAM user. See _Google Sheets Setup_ in the README. Should look like '<user>@<user>-<number>.iam.gserviceaccount.com'"
 }
 
 variable "google_private_key" {
   type = "string"
   default = "X"
-  description = "IAM user private key. See _Google Sheets Setup_ in the README. This is likely too long for TF so just type 'X' and change it manually in the AWS console later."
+  description = "IAM user private key. See _Google Sheets Setup_ in the README. This is likely too long for TF so just type 'X' and change it manually in the AWS console later. Should begin with '-----BEGIN PRIVATE KEY-----\n' and end with '\n-----END PRIVATE KEY-----\n'."
 }
 
 variable "add_candidate_authorization_code" {

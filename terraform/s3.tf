@@ -43,7 +43,7 @@ resource "aws_lambda_function" "code_bnb" {
       SPREADSHEET_KEY = "${var.spreadsheet_key}"
       GOOGLE_CLIENT_EMAIL = "${var.google_client_email}"
       GOOGLE_PRIVATE_KEY = "${var.google_private_key}"
-      AWS_API_GATEWAY_ENDPOINT = "${lower(var.lambda_function_name)}.${lower(var.domain)}"
+      AWS_API_GATEWAY_ENDPOINT = "https://${lower(var.lambda_function_name)}.${lower(var.domain)}"
       ADD_CANDIDATE_AUTHORIZATION_CODE = "${var.add_candidate_authorization_code}"
       ARCHIVE_REPO = "${var.archive_repo}"
       REVOCATION_NOTIFICATION_RECEPIENT = "${var.email_to}"

@@ -22,6 +22,7 @@ All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don
 ## Installation and Setup
 CodeBnb uses [TerraForm](http://terraform.io) to help manage infrastructure.
 
+1. Create an ACM cert valid for your domain, eg `example.com`. The ACM cert should also support a wildcard for your domain, eg `*.example.com`. (Your Lambda function will be called by an API Gateway located at `https://codebnb.example.com`.)
 1. Pick an S3 bucket to use. Set this name in `package.json` under `config` > `s3bucket`.
 1. Create the S3 bucket you want to use to as the source for the AWS Lambda function.
   1. `$ npm run createS3bucket`
