@@ -59,15 +59,29 @@ variable "google_client_email" {
 
 variable "google_private_key" {
   type = "string"
-  description = "IAM user private key. See _Google Sheets Setup_ in the README."
+  default = "X"
+  description = "IAM user private key. See _Google Sheets Setup_ in the README. This is likely too long for TF so just type 'X' and change it manually in the AWS console later."
 }
 
 variable "add_candidate_authorization_code" {
   type = "string"
-  description = "A randomly generated secret that needs to be provided in order to add a candidate to the list of permitted candidates."
+  description = "A randomly generated secret that needs to be provided in order to add a candidate to the list of permitted candidates. (You can make something up, but don't use anything a candidate can easily guess.)"
 }
 
+variable "archive_repo" {
+  type = "string"
+  default = "project-archive"
+  description = "The name of the GitHub repo to use as an archive of candidate projects."
+}
 
+variable "email_from" {
+  type = "string"
+  description = "Your email address. Will be used as the FROM address for any emails CodeBnb sends."
+}
+variable "email_to" {
+  type = "string"
+  description = "The email address to which CodeBnb notifications (ie, archived repos) should be sent."
+}
 
 
 

@@ -45,6 +45,9 @@ resource "aws_lambda_function" "code_bnb" {
       GOOGLE_PRIVATE_KEY = "${var.google_private_key}"
       AWS_API_GATEWAY_ENDPOINT = "${lower(var.lambda_function_name)}.${lower(var.domain)}"
       ADD_CANDIDATE_AUTHORIZATION_CODE = "${var.add_candidate_authorization_code}"
+      ARCHIVE_REPO = "${var.archive_repo}"
+      REVOCATION_NOTIFICATION_RECEPIENT = "${var.email_to}"
+      EMAIL_FROM = "${var.email_from}"
     }
   }
 }
