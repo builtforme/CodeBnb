@@ -169,6 +169,8 @@ resource "aws_api_gateway_integration" "post_assignment" {
   integration_http_method = "${aws_api_gateway_method.post_assignment.http_method}"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.code_bnb.invoke_arn}"
+
+  content_handling = "CONVERT_TO_TEXT"
 }
 
 resource "aws_api_gateway_integration" "get_assignment" {
@@ -179,6 +181,8 @@ resource "aws_api_gateway_integration" "get_assignment" {
   integration_http_method = "${aws_api_gateway_method.get_assignment.http_method}"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.code_bnb.invoke_arn}"
+
+  content_handling = "CONVERT_TO_TEXT"
 }
 
 resource "aws_api_gateway_integration" "add_candidate" {
@@ -189,6 +193,8 @@ resource "aws_api_gateway_integration" "add_candidate" {
   integration_http_method = "${aws_api_gateway_method.add_candidate.http_method}"
   type                    = "AWS_PROXY"
   uri                     = "${aws_lambda_function.code_bnb.invoke_arn}"
+
+  content_handling = "CONVERT_TO_TEXT"
 }
 
 resource "aws_api_gateway_deployment" "codeBnbApiGatewayDeployment" {
