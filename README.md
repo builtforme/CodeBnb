@@ -30,7 +30,7 @@ CodeBnb uses [Terraform](http://Terraform.io) to help manage infrastructure.
   1. `$ cd Terraform`
 1. Install the AWS Terraform provider.
   1. `$ Terraform init`
-1. Deploy everything using Terraform. `package.json` contains a convenience script which (a) bundles everything into a zip file, (b) uploads it to a version folder in the S3 bucket, (c) sets the s3 bucket and version variables in Terraform, and (d) runs `terraform apply` for you.
+1. Deploy everything using Terraform. `package.json` contains a convenience script which (a) bundles everything into a zip file, (b) uploads it to a version folder in the S3 bucket, (c) sets the s3 bucket and version variables in Terraform, and (d) gives you a `terraform apply` command you can run. (It doesn't run the command for you because it seems to have trouble collecting the necessary user input.)
   1. `$ npm run deploy` and run the `terraform apply` command instructed. You can manually modify the AWS Lambda environment variables afterwards.
 
 ## Manual Infrastructure Setup (not recommended)
