@@ -19,7 +19,21 @@ At the end of the assignment window, simply peruse the candidate's repo and judg
 
 All actions taken by CodeBnb are recorded in the Google Spreadsheet, and you don't have to edit the spreadsheet at all.
 
-## Setup
+## Installation and Setup
+CodeBnb uses [Terraform](http://Terraform.io) to help manage infrastructure.
+
+1. Create an ACM cert valid for your domain, eg `example.com`. The ACM cert should also support a wildcard for your domain, eg `*.example.com`. (Your Lambda function will be called by an API Gateway located at `https://codebnb.example.com`.)
+1. Pick an S3 bucket to use. Set this name in `package.json` under `config` > `s3bucket`.
+1. Create the S3 bucket you want to use to as the source for the AWS Lambda function.
+  1. `$ npm run createS3bucket`
+1. Change to the Terraform directory
+  1. `$ cd Terraform`
+1. Install the AWS Terraform provider.
+  1. `$ Terraform init`
+1. Deploy everything using Terraform. `package.json` contains a convenience script which (a) bundles everything into a zip file, (b) uploads it to a version folder in the S3 bucket, (c) sets the s3 bucket and version variables in Terraform, and (d) gives you a `terraform apply` command you can run. (It doesn't run the command for you because it seems to have trouble collecting the necessary user input.)
+  1. `$ npm run deploy` and run the `terraform apply` command instructed. You can manually modify the AWS Lambda environment variables afterwards.
+
+## Manual Infrastructure Setup (not recommended)
 
 ### AWS Lambda
 1. Run `npm run zip` to generate the file `lambda.zip`.
@@ -52,6 +66,12 @@ You need to set some environment variables in your AWS Lambda function:
 `ARCHIVE_REPO` - The name of a repo in the same `GITHUB_ORG` which will be used to store archives of projects, allowing candidate-specific repos to be deleted after a period of time. Each candidate repo will be copied into a folder named `$ARCHIVE_REPO/$TEMPLATE_REPO/$TEMPLATE_REPO-$CANDIDATE_NAME` within the ARCHIVE REPO.
 
 If running locally, you can simply store these keys in a `.env` file and they will automatically be loaded into your environment.
+
+### CloudWatch Events
+You need to configure three cloudwatch events to automate some portions of CodeBnb:
+1. `ScanForExpiredWindows` - schedule expression `rate(30 minutes)` - Input: Constant: `{"action": "scanForExpiredWindows"}`
+2. `ScanForExpiringInvitations` - schedule expression `cron(0 0 * * ? *)` - Input: Constant: `{"action": "scanForExpiringInvitations"}`
+3. `ScanForReposToArchive` - schedule expression `rate(1 day)` - Input: Constant: `{"action": "archiveRepos"}`
 
 ### GitHub Repos
 Assign the "project" [topic](https://help.github.com/articles/about-topics/) to any repo you wish to use as a template repo. When generating a candidate URL, CodeBnb will allow you to select from any _project_ topic repos within your GitHub org.
@@ -105,3 +125,6 @@ Use '--' to separate paths from revisions, like this:
 Working tree has modifications.  Cannot add.
 ```
 that likely means there are no commits in your archive repo. Make some initial commit then try again.
+
+#### API Gateway Internal Server Error
+If accessing via a web browser you get an internal server error but when you use the AWS Console to test the API Gateway integration and it works, you may need to re-deploy the API using the AWS Console.

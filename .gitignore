@@ -19,3 +19,8 @@ node_modules
 
 # Environment Variable File
 .env
+
+# Terraform
+.terraform
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup

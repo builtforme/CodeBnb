@@ -1,8 +1,14 @@
 {
-  "version": "2.3.4",
+  "version": "2.3.5",
+  "config": {
+    "s3bucket": "codebnb-sample-bucket",
+    "awsRegion": "us-east-1"
+  },
   "scripts": {
     "test": "jest --coverage",
-    "zip": "zip -r lambda.zip *.js package.json node_modules html"
+    "zip": "zip -r lambda.zip *.js package.json node_modules html",
+    "createS3bucket": "aws s3api create-bucket --bucket $npm_package_config_s3bucket --region=$npm_package_config_awsRegion",
+    "deploy": "npm version patch && $npm_package_scripts_zip && aws s3 cp lambda.zip s3://$npm_package_config_s3bucket/v$npm_package_version/lambda.zip && echo Interactive variable input required. Please execute: terraform apply -var=\"aws_region=$npm_package_config_awsRegion\" -var=\"app_version=$npm_package_version\" -var=\"s3_bucket=$npm_package_config_s3bucket\""
   },
   "dependencies": {
     "async": "^2.6.0",
