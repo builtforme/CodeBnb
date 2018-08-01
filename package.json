@@ -8,18 +8,21 @@
     "test": "jest --coverage",
     "zip": "zip -r lambda.zip *.js package.json node_modules html",
     "createS3bucket": "aws s3api create-bucket --bucket $npm_package_config_s3bucket --region=$npm_package_config_awsRegion",
-    "deploy": "npm version patch && $npm_package_scripts_zip && aws s3 cp lambda.zip s3://$npm_package_config_s3bucket/v$npm_package_version/lambda.zip && echo Interactive variable input required. Please execute: terraform apply -var=\"aws_region=$npm_package_config_awsRegion\" -var=\"app_version=$npm_package_version\" -var=\"s3_bucket=$npm_package_config_s3bucket\""
+    "deploy": "npm version patch && $npm_package_scripts_zip && aws s3 cp lambda.zip s3://$npm_package_config_s3bucket/v$npm_package_version/lambda.zip && echo Interactive variable input required. Please execute: terraform apply -var=\"aws_region=$npm_package_config_awsRegion\" -var=\"app_version=$npm_package_version\" -var=\"s3_bucket=$npm_package_config_s3bucket\"",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "async": "^2.6.0",
-    "aws-sdk": "^2.119.0",
+    "aws-sdk": "^2.178.0",
     "bluebird": "^3.5.0",
     "dotenv": "^4.0.0",
     "github": "^12.0.0",
-    "google-spreadsheet": "^2.0.4",
+    "google-spreadsheet": "^2.0.5",
     "handlebars": "^4.0.11",
     "lambda-git": "^0.1.1",
     "moment": "^2.21.0",
+    "snyk": "^1.90.0",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.4"
   },
@@ -27,5 +30,6 @@
     "codecov": "^2.3.0",
     "jest": "^21.2.1",
     "sinon": "^4.0.0"
-  }
+  },
+  "snyk": true
 }
