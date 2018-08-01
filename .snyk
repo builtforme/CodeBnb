@@ -1,8 +1,20 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.12.0
-ignore: {}
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  'npm:chownr:20180731':
+    - lambda-git > tar-fs > chownr:
+        reason: snyk has no remediation options
+        expires: '2018-08-31T16:47:27.715Z'
+  'npm:underscore.string:20170908':
+    - underscore.string:
+        reason: snyk has no remediation options
+        expires: '2018-08-31T16:47:27.715Z'
+    - underscore.string:
+        reason: snyk has no remediation options
+        expires: '2018-08-31T16:47:27.715Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:lodash:20180130':
     - google-spreadsheet > lodash:
-        patched: '2018-07-02T21:48:36.503Z'
+        patched: '2018-08-01T16:46:30.487Z'
