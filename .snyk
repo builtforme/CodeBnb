@@ -4,17 +4,17 @@ version: v1.12.0
 ignore:
   'npm:chownr:20180731':
     - lambda-git > tar-fs > chownr:
-        reason: snyk has no remediation options
-        expires: '2018-08-31T16:47:27.715Z'
+        reason: no reasonable remediation available
+        expires: '2018-10-06T12:01:47.334Z'
   'npm:underscore.string:20170908':
     - underscore.string:
-        reason: snyk has no remediation options
-        expires: '2018-08-31T16:47:27.715Z'
+        reason: snyk says no remediation options available
+        expires: '2018-10-06T12:01:47.334Z'
     - underscore.string:
-        reason: snyk has no remediation options
-        expires: '2018-08-31T16:47:27.715Z'
+        reason: snyk says no remediation options available
+        expires: '2018-10-06T12:01:47.334Z'
 # patches apply the minimum changes required to fix a vulnerability
 patch:
   'npm:lodash:20180130':
     - google-spreadsheet > lodash:
-        patched: '2018-08-01T16:46:30.487Z'
+        patched: '2018-09-06T12:00:24.708Z'
