@@ -1,6 +1,6 @@
 {
   "name": "CodeBnb",
-  "version": "2.3.6",
+  "version": "2.3.5",
   "repository": "github:builtforme/CodeBnb",
   "license": "MIT",
   "homepage": "https://github.com/builtforme/CodeBnb",
@@ -12,7 +12,7 @@
     "test": "jest --coverage",
     "zip": "zip -r lambda.zip *.js package.json node_modules html",
     "createS3bucket": "aws s3api create-bucket --bucket $npm_package_config_s3bucket --region=$npm_package_config_awsRegion",
-    "deploy": "npm version patch && $npm_package_scripts_zip && aws s3 cp lambda.zip s3://$npm_package_config_s3bucket/v$npm_package_version/lambda.zip && echo Interactive variable input required. Please execute: terraform apply -var=\"aws_region=$npm_package_config_awsRegion\" -var=\"app_version=$npm_package_version\" -var=\"s3_bucket=$npm_package_config_s3bucket\"",
+    "deploy": "npm version patch && npm run zip && aws s3 cp lambda.zip s3://$npm_package_config_s3bucket/v$npm_package_version/lambda.zip && echo Interactive variable input required. Please execute: terraform apply -var=\"aws_region=$npm_package_config_awsRegion\" -var=\"app_version=$npm_package_version\" -var=\"s3_bucket=$npm_package_config_s3bucket\"",
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect"
   },
