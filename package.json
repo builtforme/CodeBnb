@@ -26,7 +26,7 @@
     "handlebars": "^4.1.2",
     "lambda-git": "^0.1.1",
     "moment": "^2.21.0",
-    "snyk": "^1.143.1",
+    "snyk": "^1.1012.0",
     "underscore": "^1.8.3",
     "underscore.string": "^3.3.5"
   },
